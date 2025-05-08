@@ -21,28 +21,24 @@ def set_theme(mode):
     if mode == "Dark Mode":
         css = """
         <style>
-        body, .stApp {
+        .stApp {
             background-color: #111111;
             color: #EEEEEE;
         }
-        .stRadio > div[role="radiogroup"] > label {
+        div[role='radiogroup'] label span {
             color: #EEEEEE !important;
-            opacity: 1 !important;
         }
         </style>
         """
     else:
         css = """
         <style>
-        body, .stApp {
+        .stApp {
             background-color: #FFFFFF;
             color: #000000;
         }
-        .stRadio > div[role="radiogroup"] > label {
+        div[role='radiogroup'] label span {
             color: #000000 !important;
-            opacity: 1 !important;
-            transition: none !important;
-            filter: none !important;
         }
         </style>
         """
