@@ -53,6 +53,10 @@ def set_theme(is_dark_mode):
             filter: none !important;
             opacity: 1 !important;
         }
+
+        /* Fix the toggle track visibility only */
+        div[data-testid="stToggle"] div[role="switch"] {
+        background-color: #ccc !important;
         </style>
         """
     st.markdown(css, unsafe_allow_html=True)
