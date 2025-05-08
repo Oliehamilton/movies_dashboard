@@ -37,13 +37,15 @@ def set_theme(mode):
             color: #000000;
         }
     
-        /* Ensure the radio label text is visible */
-        div[role='radiogroup'] label div:nth-child(2) span {
+        /* Force visibility and colour on radio option labels */
+        div[role='radiogroup'] label > div:nth-child(2),
+        div[role='radiogroup'] label > div:nth-child(2) > span {
             color: #000000 !important;
             opacity: 1 !important;
+            filter: none !important;
         }
     
-        /* Also, globally ensure text colour */
+        /* General span and header override */
         section.main div.block-container h1, 
         section.main div.block-container h2, 
         section.main div.block-container h3, 
