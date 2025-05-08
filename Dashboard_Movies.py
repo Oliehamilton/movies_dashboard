@@ -16,7 +16,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Custom Theme Styling ---
 def set_theme(mode):
     if mode == "Dark Mode":
         css = """
@@ -56,8 +55,9 @@ def set_theme(mode):
     st.markdown(css, unsafe_allow_html=True)
 
 # --- Title and Theming Toggle ---
-st.title("🎥 Movie Dashboard")
-theme = st.radio("Select Theme", ["Light Mode", "Dark Mode"], horizontal=True)
+st.title("🎥 Movie Data Visualisation Dashboard")
+st.markdown("### 🌓 Select Theme") 
+theme = st.radio(label="", options=["Light Mode", "Dark Mode"], horizontal=True)
 set_theme(theme)
 
 # --- Layout ---
