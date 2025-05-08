@@ -16,22 +16,39 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Custom Theme Styling ---
 def set_theme(mode):
     if mode == "Dark Mode":
         css = """
         <style>
-        body, .stApp, div, p, label, span {
-            background-color: #111111 !important;
-            color: #EEEEEE !important;
+        body, .stApp {
+            background-color: #111111;
+            color: #EEEEEE;
+        }
+        .stRadio > div {
+            background-color: #222222;
+            color: #FFFFFF;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .stRadio label {
+            color: #FFFFFF !important;
         }
         </style>
         """
     else:
         css = """
         <style>
-        body, .stApp, div, p, label, span {
-            background-color: #FFFFFF !important;
+        body, .stApp {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+        .stRadio > div {
+            background-color: #F0F0F0;
+            color: #000000;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .stRadio label {
             color: #000000 !important;
         }
         </style>
