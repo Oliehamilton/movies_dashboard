@@ -57,7 +57,7 @@ def set_theme(mode):
     st.markdown(css, unsafe_allow_html=True)
 
 # --- Title and Theming Toggle ---
-st.title("🎥 Movie Data Visualisation Dashboard")
+st.title("🎥 Movie Dashboard")
 st.markdown("### 🌓 Select Theme") 
 theme = st.radio(
     label="",
