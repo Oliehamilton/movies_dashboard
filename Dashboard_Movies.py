@@ -58,7 +58,10 @@ with col_left:
     st.title("🎥 Movie Data Visualisation Dashboard")
 
 with col_right:
-    st.markdown("### 🌓 Select Theme")
+    st.markdown(
+        "<p style='font-size:16px; margin-bottom:0.5rem;'>🌓 <strong>Select Theme</strong></p>",
+        unsafe_allow_html=True
+    )
     theme = st.radio(
         label="Theme Selection",
         options=["☀️ Light Mode", "🌙 Dark Mode"],
