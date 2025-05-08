@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 def set_theme(mode):
-    if mode == "Dark Mode":
+    if mode == "🌙 Dark Mode":
         css = """
         <style>
         .stApp {
