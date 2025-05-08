@@ -16,15 +16,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-def set_theme(mode):
-    if mode == "🌙 Dark Mode":
+def set_theme(is_dark_mode):
+    if is_dark_mode:
         css = """
         <style>
         .stApp {
             background-color: #111111;
             color: #EEEEEE;
         }
-        div[role='radiogroup'] label span {
+
+        div[data-testid="stToggle"] * {
             color: #EEEEEE !important;
         }
         </style>
@@ -36,23 +37,16 @@ def set_theme(mode):
             background-color: #FFFFFF;
             color: #000000;
         }
-    
-        /* Hide auto-generated label for accessibility */
-        div[data-testid="stRadio"] > label {
-            display: none;
-        }
-    
-        /* Force radio option text to black */
-        div[role='radiogroup'] * {
+
+        div[data-testid="stToggle"] * {
             color: #000000 !important;
         }
-    
         </style>
         """
     st.markdown(css, unsafe_allow_html=True)
 
 # --- Title and Theming Toggle Aligned Top-Right ---
-col_left, col_right = st.columns([3, 1])  # Adjust as needed
+col_left, col_right = st.columns([3, 1])
 
 with col_left:
     st.title("🎥 Movie Data Visualisation Dashboard")
@@ -62,11 +56,10 @@ with col_right:
         "<p style='font-size:16px; margin-bottom:0.5rem;'>🌓 <strong>Select Theme</strong></p>",
         unsafe_allow_html=True
     )
-    is_dark_mode = st.toggle("🌙 Dark Mode", value=False)  # Default is Light Mode
+    is_dark_mode = st.toggle("🌙 Dark Mode", value=False)
 
-# Use it in your theming logic
-theme = "🌙 Dark Mode" if is_dark_mode else "☀️ Light Mode"
-set_theme(theme)
+# Apply theme
+set_theme(is_dark_mode)
 
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
