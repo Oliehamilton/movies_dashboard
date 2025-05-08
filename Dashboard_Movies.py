@@ -60,9 +60,10 @@ def set_theme(mode):
 st.title("🎥 Movie Dashboard")
 st.markdown("### 🌓 Select Theme") 
 theme = st.radio(
-    label="",
+    label="Theme Selection",  # Any descriptive label
     options=["☀️ Light Mode", "🌙 Dark Mode"],
-    horizontal=True
+    horizontal=True,
+    label_visibility="collapsed"
 )
 set_theme(theme)
 
