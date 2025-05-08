@@ -27,7 +27,7 @@ def set_theme(mode):
         }
         .stRadio > div[role="radiogroup"] > label {
             color: #EEEEEE !important;
-            opacity: 1.0 !important;
+            opacity: 1 !important;
         }
         </style>
         """
@@ -40,7 +40,9 @@ def set_theme(mode):
         }
         .stRadio > div[role="radiogroup"] > label {
             color: #000000 !important;
-            opacity: 1.0 !important;
+            opacity: 1 !important;
+            transition: none !important;
+            filter: none !important;
         }
         </style>
         """
