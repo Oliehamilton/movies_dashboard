@@ -37,15 +37,20 @@ def set_theme(mode):
             color: #000000;
         }
     
-        /* Force visibility and colour on radio option labels */
-        div[role='radiogroup'] label > div:nth-child(2),
-        div[role='radiogroup'] label > div:nth-child(2) > span {
+        div[data-testid="stRadio"] > label {
+            display: none;
+        }
+    
+        /* Aggressively fix label span styling in radio buttons */
+        div[role='radiogroup'] label span {
             color: #000000 !important;
             opacity: 1 !important;
             filter: none !important;
+            text-shadow: none !important;
+            transition: none !important;
         }
     
-        /* General span and header override */
+        /* Additional text and header override just in case */
         section.main div.block-container h1, 
         section.main div.block-container h2, 
         section.main div.block-container h3, 
