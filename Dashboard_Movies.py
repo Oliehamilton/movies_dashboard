@@ -49,7 +49,7 @@ def set_theme(is_dark_mode):
 col_left, col_right = st.columns([3, 1])
 
 with col_left:
-    st.title("🎥 Movie Data Visualisation Dashboard")
+    st.title("🎥 Movie Dashboard")
 
 with col_right:
     st.markdown(
