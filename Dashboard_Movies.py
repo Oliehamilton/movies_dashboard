@@ -37,7 +37,17 @@ def set_theme(mode):
             background-color: #FFFFFF;
             color: #000000;
         }
-        div[role='radiogroup'] label span {
+    
+        /* Force radio label text to black */
+        div[role='radiogroup'] label > div:nth-child(2) {
+            color: #000000 !important;
+        }
+    
+        /* Enforce black text in headers and spans */
+        section.main div.block-container h1, 
+        section.main div.block-container h2, 
+        section.main div.block-container h3, 
+        section.main div.block-container span {
             color: #000000 !important;
         }
         </style>
