@@ -43,16 +43,17 @@ def set_theme(is_dark_mode):
             color: #000000 !important;
         }
     
-        /* Fix span text in all widgets (including radio/selectbox, etc.) */
-        span, label, div, p {
-            color: #000000 !important;
+        /* Ensure toggle is visible in light mode */
+        div[data-testid="stToggle"] .st-eg {
+            background-color: #ccc !important;  /* toggle track */
+            border: 1px solid #999 !important;
+            border-radius: 999px;
         }
     
-        /* Remove any unwanted filter or opacity */
-        div[data-testid="stToggle"] {
-            filter: none !important;
-            opacity: 1 !important;
+        div[data-testid="stToggle"] .st-eg .css-1y4p8pa {
+            background-color: #ffffff !important;  /* toggle thumb */
         }
+    
         </style>
         """
     st.markdown(css, unsafe_allow_html=True)
