@@ -62,14 +62,10 @@ with col_right:
         "<p style='font-size:16px; margin-bottom:0.5rem;'>🌓 <strong>Select Theme</strong></p>",
         unsafe_allow_html=True
     )
-    theme = st.radio(
-        label="Theme Selection",
-        options=["☀️ Light Mode", "🌙 Dark Mode"],
-        horizontal=True,
-        label_visibility="collapsed"
-    )
+    is_dark_mode = st.toggle("🌙 Dark Mode", value=False)  # Default is Light Mode
 
-# Apply theme after selection
+# Use it in your theming logic
+theme = "🌙 Dark Mode" if is_dark_mode else "☀️ Light Mode"
 set_theme(theme)
 
 # --- Layout ---
