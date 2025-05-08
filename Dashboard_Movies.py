@@ -25,13 +25,8 @@ def set_theme(mode):
             background-color: #111111;
             color: #EEEEEE;
         }
-        .stRadio > div {
-            background-color: #222222;
-            border-radius: 10px;
-            padding: 10px;
-        }
-        .stRadio div[role='radiogroup'] span {
-            color: #FFFFFF !important;
+        .stRadio label {
+            color: #EEEEEE !important;
         }
         </style>
         """
@@ -42,12 +37,7 @@ def set_theme(mode):
             background-color: #FFFFFF;
             color: #000000;
         }
-        .stRadio > div {
-            background-color: #F0F0F0;
-            border-radius: 10px;
-            padding: 10px;
-        }
-        .stRadio div[role='radiogroup'] span {
+        .stRadio label {
             color: #000000 !important;
         }
         </style>
