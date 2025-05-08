@@ -38,12 +38,13 @@ def set_theme(mode):
             color: #000000;
         }
     
-        /* Force radio label text to black */
+        /* Override the low opacity issue in light mode for radio buttons */
         div[role='radiogroup'] label > div:nth-child(2) {
             color: #000000 !important;
+            opacity: 1 !important;
         }
     
-        /* Enforce black text in headers and spans */
+        /* General span and header override */
         section.main div.block-container h1, 
         section.main div.block-container h2, 
         section.main div.block-container h3, 
