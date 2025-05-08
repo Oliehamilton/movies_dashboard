@@ -21,24 +21,18 @@ def set_theme(mode):
     if mode == "Dark Mode":
         css = """
         <style>
-        body {
-            background-color: #111111;
-            color: #EEEEEE;
-        }
-        .stApp {
-            background-color: #111111;
+        body, .stApp, div, p, label, span {
+            background-color: #111111 !important;
+            color: #EEEEEE !important;
         }
         </style>
         """
     else:
         css = """
         <style>
-        body {
-            background-color: #FFFFFF;
-            color: #000000;
-        }
-        .stApp {
-            background-color: #FFFFFF;
+        body, .stApp, div, p, label, span {
+            background-color: #FFFFFF !important;
+            color: #000000 !important;
         }
         </style>
         """
