@@ -37,13 +37,13 @@ def set_theme(mode):
             color: #000000;
         }
     
-        /* Override the low opacity issue in light mode for radio buttons */
-        div[role='radiogroup'] label > div:nth-child(2) {
+        /* Ensure the radio label text is visible */
+        div[role='radiogroup'] label div:nth-child(2) span {
             color: #000000 !important;
             opacity: 1 !important;
         }
     
-        /* General span and header override */
+        /* Also, globally ensure text colour */
         section.main div.block-container h1, 
         section.main div.block-container h2, 
         section.main div.block-container h3, 
@@ -57,7 +57,11 @@ def set_theme(mode):
 # --- Title and Theming Toggle ---
 st.title("🎥 Movie Data Visualisation Dashboard")
 st.markdown("### 🌓 Select Theme") 
-theme = st.radio(label="", options=["Light Mode", "Dark Mode"], horizontal=True)
+theme = st.radio(
+    label="",
+    options=["☀️ Light Mode", "🌙 Dark Mode"],
+    horizontal=True
+)
 set_theme(theme)
 
 # --- Layout ---
