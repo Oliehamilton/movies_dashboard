@@ -31,15 +31,27 @@ def set_theme(is_dark_mode):
         </style>
         """
     else:
-        css = """
+         css = """
         <style>
         .stApp {
             background-color: #FFFFFF;
             color: #000000;
         }
-
+    
+        /* Force all text inside toggle block to be black */
         div[data-testid="stToggle"] * {
             color: #000000 !important;
+        }
+    
+        /* Fix span text in all widgets (including radio/selectbox, etc.) */
+        span, label, div, p {
+            color: #000000 !important;
+        }
+    
+        /* Remove any unwanted filter or opacity */
+        div[data-testid="stToggle"] {
+            filter: none !important;
+            opacity: 1 !important;
         }
         </style>
         """
