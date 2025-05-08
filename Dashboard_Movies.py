@@ -16,6 +16,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# --- Custom Theme Styling ---
 def set_theme(mode):
     if mode == "Dark Mode":
         css = """
@@ -26,11 +27,10 @@ def set_theme(mode):
         }
         .stRadio > div {
             background-color: #222222;
-            color: #FFFFFF;
             border-radius: 10px;
             padding: 10px;
         }
-        .stRadio label {
+        .stRadio div[role='radiogroup'] span {
             color: #FFFFFF !important;
         }
         </style>
@@ -44,11 +44,10 @@ def set_theme(mode):
         }
         .stRadio > div {
             background-color: #F0F0F0;
-            color: #000000;
             border-radius: 10px;
             padding: 10px;
         }
-        .stRadio label {
+        .stRadio div[role='radiogroup'] span {
             color: #000000 !important;
         }
         </style>
@@ -57,7 +56,6 @@ def set_theme(mode):
 
 # --- Title and Theming Toggle ---
 st.title("🎥 Movie Data Visualisation Dashboard")
-
 theme = st.radio("Select Theme", ["Light Mode", "Dark Mode"], horizontal=True)
 set_theme(theme)
 
