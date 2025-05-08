@@ -37,26 +37,16 @@ def set_theme(mode):
             color: #000000;
         }
     
+        /* Hide auto-generated label for accessibility */
         div[data-testid="stRadio"] > label {
             display: none;
         }
     
-        /* Aggressively fix label span styling in radio buttons */
-        div[role='radiogroup'] label span {
+        /* Force radio option text to black */
+        div[role='radiogroup'] * {
             color: #000000 !important;
-            opacity: 1 !important;
-            filter: none !important;
-            text-shadow: none !important;
-            transition: none !important;
         }
     
-        /* Additional text and header override just in case */
-        section.main div.block-container h1, 
-        section.main div.block-container h2, 
-        section.main div.block-container h3, 
-        section.main div.block-container span {
-            color: #000000 !important;
-        }
         </style>
         """
     st.markdown(css, unsafe_allow_html=True)
