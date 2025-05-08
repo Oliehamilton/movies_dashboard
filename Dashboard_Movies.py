@@ -51,15 +51,22 @@ def set_theme(mode):
         """
     st.markdown(css, unsafe_allow_html=True)
 
-# --- Title and Theming Toggle ---
-st.title("🎥 Movie Dashboard")
-st.markdown("### 🌓 Select Theme") 
-theme = st.radio(
-    label="Theme Selection",  # Any descriptive label
-    options=["☀️ Light Mode", "🌙 Dark Mode"],
-    horizontal=True,
-    label_visibility="collapsed"
-)
+# --- Title and Theming Toggle Aligned Top-Right ---
+col_left, col_right = st.columns([3, 1])  # Adjust as needed
+
+with col_left:
+    st.title("🎥 Movie Data Visualisation Dashboard")
+
+with col_right:
+    st.markdown("### 🌓 Select Theme")
+    theme = st.radio(
+        label="Theme Selection",
+        options=["☀️ Light Mode", "🌙 Dark Mode"],
+        horizontal=True,
+        label_visibility="collapsed"
+    )
+
+# Apply theme after selection
 set_theme(theme)
 
 # --- Layout ---
