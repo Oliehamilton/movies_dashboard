@@ -9,6 +9,9 @@ import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 # --- Page Config ---
 st.set_page_config(
@@ -52,6 +55,40 @@ genre_colors = {
     "Fantasy": "#9C755F", "Animation": "#BAB0AC", "Musical": "#8CD17D", "Sci-Fi": "#499894",
     "Children": "#D37295", "Mystery": "#FABFD2", "War": "#B6992D", "Film-Noir": "#5C5C5C"
 }
+
+# --- Plot 7 Data Preparation --- 
+ratings_df = pd.read_csv("ratings.csv")
+ratings_df.drop(columns=['timestamp'], inplace=True)
+
+original_df = pd.read_csv("movies.csv", encoding="ISO-8859-1")
+
+user_item_matrix = ratings_df.pivot(index='userId', columns='movieId', values='rating')
+adjusted_user_ratings = user_item_matrix.apply(lambda row: row.fillna(row.mean()), axis=1)
+
+# Define helper
+def find_n_neighbours(sim_df, n):
+    user_ids = sim_df.index
+    top_n = pd.DataFrame(
+        np.argsort(-sim_df.values, axis=1)[:, :n],
+        index=user_ids,
+        columns=[f"top{i+1}" for i in range(n)]
+    )
+    top_n = top_n.applymap(lambda idx: user_ids[idx])
+    return top_n
+
+# Cache similarity computation + neighbour retrieval
+@st.cache_data
+def compute_top_neighbours(adjusted_matrix):
+    sim_matrix = cosine_similarity(adjusted_matrix)
+    np.fill_diagonal(sim_matrix, 0)
+    sim_df = pd.DataFrame(sim_matrix, index=adjusted_matrix.index, columns=adjusted_matrix.index)
+    return find_n_neighbours(sim_df, n=5)
+
+top_neighbours_df = compute_top_neighbours(adjusted_user_ratings)
+
+
+
+# --- --- --- --- --- --- --- --- --- --- --- 
 
 # --- Force Dark Mode Styling ---
 dark_mode_css = """
