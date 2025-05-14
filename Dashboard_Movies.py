@@ -103,8 +103,8 @@ col1, col2 = st.columns([1, 2])
 
 # --- Filter Selector and Summary Header ---
 with col1:
-    selected_year = st.selectbox("Filter by Year", years)
     st.markdown("### 🎯 Summary Metrics")
+    selected_year = st.selectbox("Filter by Year", years)
     st.subheader("Average Rating")
 
 # --- Filter the Data ---
