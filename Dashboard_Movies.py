@@ -10,6 +10,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
+# --- Set Up Data ---
+movies_df = pd.read_csv('movies_cleaned_3.csv')
+@st.cache_data
+def load_data():
+    return pd.read_csv("movies_cleaned_3.csv")
+
+movies_df = load_data()
+
 # --- Page Config ---
 st.set_page_config(
     page_title="Movie Dashboard",
@@ -39,41 +47,51 @@ col1, col2 = st.columns([1, 2])
 col3, col4 = st.columns([2, 2])
 col5, col6 = st.columns([1, 1])
 
-# --- Top Donuts Section (Average Rating and Movie Count) ---
-average_rating = 4.0
-movie_count = 5
+# --- Interactive Year Selection ---
+years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().astype(int).tolist())
+selected_year = st.selectbox("Filter by Year", years)
 
-# --- Donut Chart for Average Rating ---
+# --- Filter the Data ---
+if selected_year == 'All':
+    filtered_df = movies_df.copy()
+else:
+    filtered_df = movies_df[movies_df['release_year_from_date'] == selected_year]
+
+# --- Calculate Metrics ---
+average_rating = round(filtered_df['mean_rating'].mean(), 2)
+movie_count = filtered_df['movieId'].nunique()
+
+# --- Top Donuts Section ---
 with col1:
     st.subheader("Average Rating")
     fig_rating = go.Figure(data=[go.Pie(
+        labels=["Rating", ""],
         values=[average_rating, 5 - average_rating],
-        hole=0.6,
-        marker_colors=["#FFD700", "#333333"],
+        hole=0.7,
+        marker_colors=['#66C2A5', '#222222'],
         textinfo='none'
     )])
     fig_rating.update_layout(
         showlegend=False,
-        annotations=[dict(text=f"{average_rating:.1f}", x=0.5, y=0.5, font_size=20, showarrow=False)],
-        margin=dict(t=0, b=0, l=0, r=0),
-        height=200
+        margin=dict(t=10, b=10, l=10, r=10),
+        height=200,
+        annotations=[dict(text=f"{average_rating}", x=0.5, y=0.5, font_size=24, showarrow=False)]
     )
     st.plotly_chart(fig_rating, use_container_width=True)
 
-# --- Donut Chart for Movie Count ---
-with col1:
     st.subheader("Movie Count")
     fig_count = go.Figure(data=[go.Pie(
-        values=[movie_count, max(10, movie_count + 1) - movie_count],
-        hole=0.6,
-        marker_colors=["#1f77b4", "#333333"],
+        labels=["Movies", ""],
+        values=[movie_count, movie_count * 0.1],  # Just to create the visual donut
+        hole=0.7,
+        marker_colors=['#FC8D62', '#222222'],
         textinfo='none'
     )])
     fig_count.update_layout(
         showlegend=False,
-        annotations=[dict(text=str(movie_count), x=0.5, y=0.5, font_size=20, showarrow=False)],
-        margin=dict(t=0, b=0, l=0, r=0),
-        height=200
+        margin=dict(t=10, b=10, l=10, r=10),
+        height=200,
+        annotations=[dict(text=str(movie_count), x=0.5, y=0.5, font_size=24, showarrow=False)]
     )
     st.plotly_chart(fig_count, use_container_width=True)
 # --- Yearly Trend Section (Movie Count + Avg Rating over Time) ---
