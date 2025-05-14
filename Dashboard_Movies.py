@@ -461,12 +461,19 @@ if selected_user:
             for i in range(min(3, len(top_recs))):
                 with cols1[i]:
                     st.markdown(f"""
-                    <div style='text-align: center;'>
-                        <h5>🎬 {top_recs.loc[i, 'title']}</h5>
-                        <p><em>📂 {top_recs.loc[i, 'genres']}</em></p>
-                        <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[i, 'mean_rating']:.2f}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
+                            <div style='
+                                background-color: #FFF5F7;
+                                color: #000000;
+                                padding: 1rem;
+                                border-radius: 12px;
+                                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                                text-align: center;
+                            '>
+                                <h5>🎬 {top_recs.loc[i, 'title']}</h5>
+                                <p><em>📂 {top_recs.loc[i, 'genres']}</em></p>
+                                <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[i, 'mean_rating']:.2f}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
             
             # Second row with exactly 2 recommendations centered
             if len(top_recs) > 3:
@@ -476,11 +483,18 @@ if selected_user:
                     if 3 + idx < len(top_recs):
                         with cols2[col_idx]:
                             st.markdown(f"""
-                            <div style='text-align: center;'>
-                                <h5>🎬 {top_recs.loc[3 + idx, 'title']}</h5>
-                                <p><em>📂 {top_recs.loc[3 + idx, 'genres']}</em></p>
-                                <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[3 + idx, 'mean_rating']:.2f}</p>
-                            </div>
+                                <div style='
+                                    background-color: #FFF5F7;
+                                    color: #000000;
+                                    padding: 1rem;
+                                    border-radius: 12px;
+                                    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                                    text-align: center;
+                                '>
+                                    <h5>🎬 {top_recs.loc[3 + idx, 'title']}</h5>
+                                    <p><em>📂 {top_recs.loc[3 + idx, 'genres']}</em></p>
+                                    <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[3 + idx, 'mean_rating']:.2f}</p>
+                                </div>
                             """, unsafe_allow_html=True)
 
     except KeyError:
