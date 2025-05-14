@@ -97,7 +97,57 @@ with col1:
 # --- Yearly Trend Section (Movie Count + Avg Rating over Time) ---
 with col2:
     st.subheader("Movie Trends Over Time")
-    st.empty()  # Placeholder for line/bar chart
+
+    # Create year range for slider
+    all_years = movies_df['release_year_from_date'].dropna().astype(int)
+    year_min, year_max = int(all_years.min()), int(all_years.max())
+
+    # Year range slider
+    selected_range = st.slider("Select Year Range", year_min, year_max, (year_min, year_max))
+
+    # Metric selector
+    metric = st.radio("Metric", ["Movie Count", "Average Rating"], horizontal=True)
+
+    # Filter data
+    filtered_df = movies_df[
+        (movies_df['release_year_from_date'].astype(int) >= selected_range[0]) &
+        (movies_df['release_year_from_date'].astype(int) <= selected_range[1])
+    ]
+
+    # Group and prepare data
+    if metric == "Movie Count":
+        grouped = (
+            filtered_df['release_year_from_date']
+            .astype(int)
+            .value_counts()
+            .sort_index()
+            .reset_index()
+            .rename(columns={'index': 'Year', 'release_year_from_date': 'Value'})
+        )
+    else:
+        grouped = (
+            filtered_df.groupby('release_year_from_date')['mean_rating']
+            .mean()
+            .reset_index()
+            .rename(columns={'release_year_from_date': 'Year', 'mean_rating': 'Value'})
+        )
+
+    # Plot
+    fig = px.bar(
+        grouped,
+        x='Year',
+        y='Value',
+        title=f"{metric} per Year",
+        labels={'Year': 'Release Year', 'Value': metric},
+        color_discrete_sequence=['dodgerblue']
+    )
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font_color='#EEEEEE'
+    )
+    fig.update_traces(hovertemplate='Year: %{x}<br>' + metric + ': %{y:.2f}')
+    st.plotly_chart(fig, use_container_width=True)
 
 # --- Interactive Genre Panel ---
 with col3:
