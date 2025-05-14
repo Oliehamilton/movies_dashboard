@@ -80,21 +80,12 @@ with col1:
 
 col3, col4 = st.columns([2, 2])
 col5, col6 = st.columns([3, 2])
-with col5:
-    st.subheader("📈 Rising Genres")
-    # Rising genre logic here
-
-with col6:
-    st.subheader("🧠 Hidden Gems")
-    # Hidden gem logic here
 
 # --- Filter the Data ---
 if selected_year == 'All':
     filtered_df = movies_df.copy()
 else:
     filtered_df = movies_df[movies_df['release_year_from_date'] == selected_year]
-
-
 
 # --- Calculate Metrics ---
 average_rating = round(filtered_df['mean_rating'].mean(), 2)
@@ -370,3 +361,7 @@ with col5:
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+with col6:
+    st.subheader("Hidden Gems")
+    # Hidden gems logic here
