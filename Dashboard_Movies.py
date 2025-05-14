@@ -214,6 +214,7 @@ with col2:
     st.plotly_chart(fig, use_container_width=True)
 
 # --- Interactive Genre Panel ---
+col3, col4 = st.columns([2, 2])
 with col3:
     st.subheader("🎬 Movie Trends Over Time")
 
