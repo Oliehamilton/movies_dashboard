@@ -276,8 +276,15 @@ with col4:
     # Add "All Years" at the end
     block_labels.append("All Years")
 
+    # Add "All Years" to the beginning
+    block_labels.insert(0, "All Years")
+
     # --- Selector ---
-    selected_label = st.radio("Select 5-Year Block", block_labels, horizontal=True)
+    # Re-map the year blocks (shifted because of the new first item)
+    label_to_range = dict(zip(block_labels[1:], year_blocks))
+    
+    # --- Selector with default on 'All Years'
+    selected_label = st.radio("Select 5-Year Block", block_labels, index=0, horizontal=True)
 
     if selected_label == "All Years":
         filtered = movies_df[movies_df['rating_count'] >= 30]
