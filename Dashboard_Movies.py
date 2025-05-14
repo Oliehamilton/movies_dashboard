@@ -77,13 +77,24 @@ years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().a
 col1, col2 = st.columns([1, 2])
 with col1:
     selected_year = st.selectbox("Filter by Year", years)
+
 col3, col4 = st.columns([2, 2])
+col5, col6 = st.columns([3, 2])
+with col5:
+    st.subheader("📈 Rising Genres")
+    # Rising genre logic here
+
+with col6:
+    st.subheader("🧠 Hidden Gems")
+    # Hidden gem logic here
 
 # --- Filter the Data ---
 if selected_year == 'All':
     filtered_df = movies_df.copy()
 else:
     filtered_df = movies_df[movies_df['release_year_from_date'] == selected_year]
+
+
 
 # --- Calculate Metrics ---
 average_rating = round(filtered_df['mean_rating'].mean(), 2)
@@ -310,3 +321,52 @@ with col4:
         )
 
         st.plotly_chart(fig, use_container_width=True)
+
+
+# --- Discovery Highlights ---
+with col5:
+    st.subheader("Rising Genres")
+
+    # Prepare YoY change
+    genre_pivot = (
+        genre_year_counts
+        .pivot(index='year', columns='genre_columns', values='movie_count')
+        .sort_index()
+    )
+
+    yoy_diff = (
+        genre_pivot
+        .diff()
+        .reset_index()
+        .melt(id_vars='year', var_name='genre', value_name='change')
+        .dropna()
+    )
+
+    latest_year = genre_year_counts['year'].max()
+
+    rising_genres = (
+        yoy_diff[yoy_diff['year'] == latest_year]
+        .sort_values('change', ascending=False)
+        .head(5)
+    )
+
+    fig = px.bar(
+        rising_genres.sort_values('change'),
+        x='change',
+        y='genre',
+        orientation='h',
+        title=f"Top 5 Rising Genres (YoY Change {latest_year-1} → {latest_year})",
+        labels={'change': 'Increase in Movie Count', 'genre': 'Genre'},
+        color_discrete_sequence=['#90EE90']
+    )
+
+    fig.update_traces(marker_line_color='black', marker_line_width=1)
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#EEEEEE'),
+        margin=dict(t=60, b=40, l=60, r=60),
+        yaxis=dict(categoryorder='total ascending')
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
