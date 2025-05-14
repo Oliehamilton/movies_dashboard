@@ -57,7 +57,7 @@ genre_colors = {
 }
 
 # --- Plot 7 Data Preparation --- 
-ratings_df = pd.read_csv("ratings.csv")
+ratings_df = pd.read_csv("rating.csv")
 ratings_df.drop(columns=['timestamp'], inplace=True)
 
 original_df = pd.read_csv("movies.csv", encoding="ISO-8859-1")
