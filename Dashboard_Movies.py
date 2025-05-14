@@ -336,10 +336,10 @@ with col5:
     latest_year = genre_year_counts['year'].max()
 
     rising_genres = (
-        yoy_diff[yoy_diff['year'] == latest_year]
+        yoy_diff[(yoy_diff['year'] == latest_year) & (yoy_diff['change'] > 0)]
         .sort_values('change', ascending=False)
         .head(5)
-    )
+        )
 
     fig = px.bar(
         rising_genres.sort_values('change'),
