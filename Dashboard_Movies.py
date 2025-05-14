@@ -108,65 +108,61 @@ with col2:
         (movies_df['release_year_from_date'].astype(int) >= selected_range[0]) &
         (movies_df['release_year_from_date'].astype(int) <= selected_range[1])
     ]
+
     summary = (
         df_filtered.groupby('release_year_from_date')
         .agg(movie_count=('title', 'count'), average_rating=('mean_rating', 'mean'))
         .reset_index()
-        .sort_values('release_year_from_date')
+        .rename(columns={'release_year_from_date': 'Year'})
+        .sort_values('Year')
     )
 
-    # Build animated plot with Plotly
-    fig = px.bar(
-        summary,
-        x='release_year_from_date',
-        y='movie_count',
-        labels={'release_year_from_date': 'Year', 'movie_count': 'Number of Movies'},
-        animation_frame='release_year_from_date',
-        range_y=[0, summary['movie_count'].max() * 1.2],
-        color_discrete_sequence=['#7BAFD4']
-    )
+    # Create base figure
+    fig = go.Figure()
 
-    fig.add_scatter(
-        x=summary['release_year_from_date'],
+    # Add bar chart for movie count
+    fig.add_trace(go.Bar(
+        x=summary['Year'],
+        y=summary['movie_count'],
+        name='Number of Movies',
+        marker_color='#7BAFD4',
+        yaxis='y1',
+        hovertemplate='Year: %{x}<br>Movies: %{y}<extra></extra>'
+    ))
+
+    # Add line chart for average rating
+    fig.add_trace(go.Scatter(
+        x=summary['Year'],
         y=summary['average_rating'],
-        mode='lines+markers',
         name='Average Rating',
+        mode='lines+markers',
+        line=dict(color='#9F7AEA', width=2),
         yaxis='y2',
-        line=dict(color='#9F7AEA', width=2)
-    )
+        hovertemplate='Year: %{x}<br>Avg Rating: %{y:.2f}<extra></extra>'
+    ))
 
-    # Dual axis setup
+    # Update layout for dual axis
     fig.update_layout(
-        title='Animated Trends: Movie Count & Average Rating Over Time',
-        xaxis_title='Year',
-        yaxis=dict(title='Number of Movies', color='#7BAFD4'),
+        title='Movie Count and Average Rating per Year',
+        xaxis=dict(title='Year'),
+        yaxis=dict(
+            title='Number of Movies',
+            titlefont=dict(color='#7BAFD4'),
+            tickfont=dict(color='#7BAFD4')
+        ),
         yaxis2=dict(
             title='Average Rating',
             overlaying='y',
             side='right',
-            color='#9F7AEA',
+            titlefont=dict(color='#9F7AEA'),
+            tickfont=dict(color='#9F7AEA'),
             range=[0, 10]
         ),
+        legend=dict(x=0.01, y=0.99),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         font_color='#EEEEEE',
-        updatemenus=[{
-            "buttons": [
-                {"args": [None, {"frame": {"duration": 300, "redraw": True}, "fromcurrent": True}],
-                 "label": "▶️ Play",
-                 "method": "animate"},
-                {"args": [[None], {"frame": {"duration": 0}, "mode": "immediate"}],
-                 "label": "⏸ Pause",
-                 "method": "animate"}
-            ],
-            "type": "buttons",
-            "direction": "left",
-            "pad": {"r": 10, "t": 87},
-            "x": 0.1,
-            "xanchor": "right",
-            "y": 0,
-            "yanchor": "top"
-        }]
+        margin=dict(t=60, b=40, l=60, r=60)
     )
 
     st.plotly_chart(fig, use_container_width=True)
