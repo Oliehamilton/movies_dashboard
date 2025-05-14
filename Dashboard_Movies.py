@@ -237,55 +237,56 @@ with col3:
 with col4:
     st.subheader("⭐ Top Rated Movies")
 
-    # Define year intervals (5-year steps)
+    # --- Year Block Setup ---
     min_year = int(movies_df['release_year_from_date'].min())
     max_year = int(movies_df['release_year_from_date'].max())
+
     year_blocks = [(start, start + 4) for start in range(min_year, max_year + 1, 5)]
     block_labels = [f"{start}–{end}" for start, end in year_blocks]
     label_to_range = dict(zip(block_labels, year_blocks))
 
-    # Horizontal radio button for selection
+    # Add "All Years" at the end
+    block_labels.append("All Years")
+
+    # --- Selector ---
     selected_label = st.radio("Select 5-Year Block", block_labels, horizontal=True)
-    year_start, year_end = label_to_range[selected_label]
 
-    # Filter movies in the selected block with enough ratings
-    filtered = movies_df[
-        (movies_df['release_year_from_date'] >= year_start) &
-        (movies_df['release_year_from_date'] <= year_end) &
-        (movies_df['rating_count'] >= 30)
-    ]
+    if selected_label == "All Years":
+        filtered = movies_df[movies_df['rating_count'] >= 30]
+    else:
+        year_start, year_end = label_to_range[selected_label]
+        filtered = movies_df[
+            (movies_df['release_year_from_date'] >= year_start) &
+            (movies_df['release_year_from_date'] <= year_end) &
+            (movies_df['rating_count'] >= 30)
+        ]
 
-    # Top 10 by mean rating
+    # --- Top Movies ---
     top_movies = filtered.sort_values('mean_rating', ascending=False).head(10)
 
     if top_movies.empty:
         st.warning(f"No movies found with ≥30 ratings in {selected_label}.")
     else:
         pastel_palette = [
-            "#bcb6f6",  # lavender
-            "#a0c4ff",  # light blue
-            "#ffd6a5",  # peach
-            "#caffbf",  # mint green
-            "#ffadad",  # soft red
-            "#fdffb6",  # pale yellow
-            "#d0bdf4",  # soft violet
-            "#ffc6ff",  # light pink
-            "#9bf6ff",  # sky blue
-            "#bdb2ff"   # soft purple
+            "#bcb6f6", "#a0c4ff", "#ffd6a5", "#caffbf", "#ffadad",
+            "#fdffb6", "#d0bdf4", "#ffc6ff", "#9bf6ff", "#bdb2ff"
         ]
+        color_map = {title: pastel_palette[i % len(pastel_palette)] for i, title in enumerate(top_movies['title'])}
 
         fig = px.bar(
             top_movies.sort_values('mean_rating'),
             x='mean_rating',
             y='title',
             orientation='h',
-            title=f"Top 10 Movies ({selected_label}) by Average Rating",
+            title=f"Top 10 Movies by Average Rating ({selected_label})",
             labels={'mean_rating': 'Average Rating', 'title': 'Movie'},
-            color_discrete_sequence=pastel_palette
+            color='title',  # use each movie as a color group
+            color_discrete_map=color_map
         )
 
         fig.update_traces(marker_line_color='black', marker_line_width=1)
         fig.update_layout(
+            showlegend=False,
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#EEEEEE'),
