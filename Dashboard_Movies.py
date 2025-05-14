@@ -60,7 +60,7 @@ genre_colors = {
 ratings_df = pd.read_csv("rating.csv")
 ratings_df.drop(columns=['timestamp'], inplace=True)
 
-original_df = pd.read_csv("movies.csv", encoding="ISO-8859-1")
+original_df = pd.read_csv("movies.csv")
 
 user_item_matrix = ratings_df.pivot(index='userId', columns='movieId', values='rating')
 adjusted_user_ratings = user_item_matrix.apply(lambda row: row.fillna(row.mean()), axis=1)
