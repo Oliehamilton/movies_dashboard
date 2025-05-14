@@ -113,8 +113,8 @@ years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().a
 
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
-with col1:
-    selected_year = st.selectbox("Filter by Year", years)
+#with col1:
+ #   selected_year = st.selectbox("Filter by Year", years)
 
 
 
