@@ -271,19 +271,14 @@ with col4:
 
     year_blocks = [(start, start + 4) for start in range(min_year, max_year + 1, 5)]
     block_labels = [f"{start}–{end}" for start, end in year_blocks]
-    label_to_range = dict(zip(block_labels, year_blocks))
 
-    # Add "All Years" at the end
-    block_labels.append("All Years")
-
-    # Add "All Years" to the beginning
+    # ✅ Add "All Years" to the beginning only
     block_labels.insert(0, "All Years")
 
-    # --- Selector ---
-    # Re-map the year blocks (shifted because of the new first item)
+    # ✅ Re-map blocks skipping the first label ("All Years")
     label_to_range = dict(zip(block_labels[1:], year_blocks))
-    
-    # --- Selector with default on 'All Years'
+
+    # ✅ Set default to 'All Years'
     selected_label = st.radio("Select 5-Year Block", block_labels, index=0, horizontal=True)
 
     if selected_label == "All Years":
