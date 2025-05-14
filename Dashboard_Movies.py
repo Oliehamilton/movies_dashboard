@@ -262,7 +262,7 @@ with col4:
         ]
 
     # --- Top Movies ---
-    top_movies = filtered.sort_values('mean_rating', ascending=False).head(5)
+    top_movies['title_with_year'] = top_movies['title'] + " (" + top_movies['release_year_from_date'].astype(str) + ")"
 
     if top_movies.empty:
         st.warning(f"No movies found with ≥30 ratings in {selected_label}.")
@@ -271,16 +271,19 @@ with col4:
             "#bcb6f6", "#a0c4ff", "#ffd6a5", "#caffbf", "#ffadad",
             "#fdffb6", "#d0bdf4", "#ffc6ff", "#9bf6ff", "#bdb2ff"
         ]
-        color_map = {title: pastel_palette[i % len(pastel_palette)] for i, title in enumerate(top_movies['title'])}
+        color_map = {
+            row['title_with_year']: pastel_palette[i % len(pastel_palette)]
+            for i, row in top_movies.iterrows()
+        }
 
         fig = px.bar(
             top_movies.sort_values('mean_rating'),
             x='mean_rating',
-            y='title',
+            y='title_with_year',
             orientation='h',
             title=f"Top 10 Movies by Average Rating ({selected_label})",
-            labels={'mean_rating': 'Average Rating', 'title': 'Movie'},
-            color='title',  # use each movie as a color group
+            labels={'mean_rating': 'Average Rating', 'title_with_year': 'Movie'},
+            color='title_with_year',
             color_discrete_map=color_map
         )
 
