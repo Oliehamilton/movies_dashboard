@@ -262,7 +262,7 @@ with col4:
         ]
 
     # --- Top Movies ---
-    top_movies = filtered.sort_values('mean_rating', ascending=False).head(10)
+    top_movies = filtered.sort_values('mean_rating', ascending=False).head(5)
     top_movies['title_with_year'] = top_movies['title'] + " (" + top_movies['release_year_from_date'].astype(str) + ")"
 
     if top_movies.empty:
@@ -283,7 +283,7 @@ with col4:
             y='title_with_year',
             orientation='h',
             title=f"Top 10 Movies by Average Rating ({selected_label})",
-            labels={'mean_rating': 'Average Rating', 'title_with_year': 'Movie'},
+            labels={'mean_rating': 'Average Rating'}#, 'title_with_year': 'Movie'},
             color='title_with_year',
             color_discrete_map=color_map
         )
