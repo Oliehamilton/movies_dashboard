@@ -223,10 +223,10 @@ with col3:
     max_year = genre_year_counts['year'].max()
 
     # Year slider
-    selected_year = st.slider("Select Year", min_year, max_year, max_year)
+    selected_genre_year = st.slider("Select Year", min_year, max_year, max_year)
 
     # Filter and summarise top 10 genres up to selected year
-    filtered = genre_year_counts[genre_year_counts['year'] <= selected_year]
+    filtered = genre_year_counts[genre_year_counts['year'] <= selected_genre_year]
     summary = (
         filtered.groupby('genre_columns')['movie_count']
         .sum()
@@ -241,7 +241,7 @@ with col3:
         x='movie_count',
         y='genre_columns',
         orientation='h',
-        title=f"Top 10 Genres Up to {selected_year}",
+        title=f"Top 10 Genres Up to {selected_genre_year}",
         color='genre_columns',
         color_discrete_map=genre_colors,
         labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre'}
