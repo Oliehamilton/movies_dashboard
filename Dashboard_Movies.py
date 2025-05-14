@@ -318,7 +318,7 @@ col5, col6 = st.columns([3, 2])
 with col5:
     st.subheader("Rising Genres")
 
-    # Create pivot and calculate YoY growth
+        # Create pivot and calculate YoY growth
     genre_pivot = (
         genre_year_counts
         .pivot(index='year', columns='genre_columns', values='movie_count')
@@ -342,30 +342,38 @@ with col5:
         .tolist()
     )
 
-    # Filter for those genres
-    filtered_trend = genre_year_counts[genre_year_counts['genre_columns'].isin(top_genres)]
+    if not top_genres:
+        st.warning(f"No genres showed positive growth in {latest_year}.")
+    else:
+        # Filter for those genres
+        filtered_trend = genre_year_counts[genre_year_counts['genre_columns'].isin(top_genres)].copy()
+        filtered_trend['year'] = filtered_trend['year'].astype(str)  # force as categorical
 
-    # Line plot
-    fig = px.line(
-        filtered_trend,
-        x='year',
-        y='movie_count',
-        color='genre_columns',
-        markers=True,
-        title=f"Trend Over Time: Top 5 Growing Genres in {latest_year}",
-        labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre'}
-    )
+        # Debugging info (optional)
+        # st.write("Top genres for line plot:", top_genres)
+        # st.dataframe(filtered_trend)
 
-    fig.update_traces(mode='lines+markers', marker=dict(size=6), line=dict(width=2))
-    fig.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#EEEEEE'),
-        margin=dict(t=60, b=40, l=60, r=60),
-        hovermode="x unified"
-    )
+        # Line plot
+        fig = px.line(
+            filtered_trend,
+            x='year',
+            y='movie_count',
+            color='genre_columns',
+            markers=True,
+            title=f"Trend Over Time: Top 5 Growing Genres in {latest_year}",
+            labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre', 'year': 'Year'}
+        )
 
-    st.plotly_chart(fig, use_container_width=True)
+        fig.update_traces(mode='lines+markers', marker=dict(size=6), line=dict(width=2))
+        fig.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#EEEEEE'),
+            margin=dict(t=60, b=40, l=60, r=60),
+            hovermode="x unified"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
 with col6:
     st.subheader("Hidden Gems")
