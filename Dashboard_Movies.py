@@ -236,5 +236,59 @@ with col3:
 # --- Top Movies Section ---
 with col4:
     st.subheader("⭐ Top Rated Movies")
-    st.empty()  # Placeholder for horizontal bar chart or stat display
 
+    # Dynamically calculate 5-year bins
+    min_year = genre_year_counts['year'].min()
+    max_year = genre_year_counts['year'].max()
+
+    # Create list of 5-year intervals
+    year_blocks = [(start, start + 4) for start in range(min_year, max_year + 1, 5)]
+    block_labels = [f"{start}–{end}" for start, end in year_blocks]
+
+    # Create mapping for label to tuple
+    label_to_range = dict(zip(block_labels, year_blocks))
+
+    # Select 5-year range
+    selected_label = st.select_slider("Select 5-Year Block", options=block_labels, value=block_labels[-1])
+    year_start, year_end = label_to_range[selected_label]
+
+    # Filter movies within selected time block
+    filtered_movies = movies_df[
+        (movies_df['release_year_from_date'] >= year_start) &
+        (movies_df['release_year_from_date'] <= year_end)
+    ]
+
+    # Merge ratings and filter for count threshold
+    ratings_summary = ratings_df.groupby('movieId').agg(
+        rating_count=('rating', 'count'),
+        mean_rating=('rating', 'mean')
+    ).reset_index()
+
+    top_rated_avg = (
+        ratings_summary[ratings_summary['rating_count'] >= 30]
+        .merge(filtered_movies[['movieId', 'title']], on='movieId')
+        .sort_values('mean_rating', ascending=False)
+        .head(10)
+    )
+
+    # Plot bar chart with Plotly
+    fig = px.bar(
+        top_rated_avg.sort_values('mean_rating'),
+        x='mean_rating',
+        y='title',
+        orientation='h',
+        title=f"Top 10 Movies ({year_start}–{year_end}) by Average Rating",
+        labels={'mean_rating': 'Average Rating', 'title': 'Movie'},
+        color_discrete_sequence=['#F4D35E']
+    )
+
+    fig.update_traces(marker_line_color='black', marker_line_width=1)
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#EEEEEE'),
+        xaxis=dict(range=[0, 5]),
+        margin=dict(t=60, b=40, l=60, r=60)
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
