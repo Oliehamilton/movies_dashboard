@@ -476,7 +476,7 @@ if selected_user:
                             """, unsafe_allow_html=True)
 
             # Add vertical spacing between rows
-            # st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<br><br>", unsafe_allow_html=True)
             
             # Second row with exactly 2 recommendations centered
             if len(top_recs) > 3:
