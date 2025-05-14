@@ -353,11 +353,13 @@ with col5:
 
     fig.update_traces(mode='lines+markers', marker=dict(size=6), line=dict(width=2))
     fig.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#EEEEEE'),
-        margin=dict(t=60, b=40, l=60, r=60),
-        hovermode="x unified"
+    plot_bgcolor='rgba(0,0,0,0)',
+    paper_bgcolor='rgba(0,0,0,0)',
+    font=dict(color='#EEEEEE'),
+    margin=dict(t=60, b=40, l=60, r=60),
+    hovermode="x unified",
+    legend_title_text='Genre',
+    legend=dict(itemclick='toggleothers', itemdoubleclick='toggle')
     )
 
     st.plotly_chart(fig, use_container_width=True)
