@@ -230,8 +230,8 @@ with col3:
     st.plotly_chart(fig, use_container_width=True)
 
     # Genre dropdown populated from top genres at selected year
-    st.markdown("#### ℹ️ Genre Info")
-    selected_genre = st.selectbox("Select Genre", options=summary['genre_columns'].tolist())
+    #st.markdown("#### ℹ️ Genre Info")
+    #selected_genre = st.selectbox("Select Genre", options=summary['genre_columns'].tolist())
 
 # --- Top Movies Section ---
 with col4:
