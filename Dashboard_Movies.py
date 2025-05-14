@@ -266,7 +266,7 @@ with col4:
             y='title',
             orientation='h',
             title=f"Top 10 Movies by Average Rating ({selected_year})",
-            labels={'mean_rating': 'Average Rating', 'title': 'Movie'},
+            labels={'mean_rating': 'Average Rating'},
             color_discrete_sequence=['#F4D35E']
         )
 
