@@ -461,27 +461,26 @@ if selected_user:
             for i in range(min(3, len(top_recs))):
                 with cols1[i]:
                     st.markdown(f"""
-                            <div style='
-                                background-color: #F3E8FF;
-                                color: #000000;
-                                padding: 1rem;
-                                border-radius: 12px;
-                                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-                                text-align: center;
-                            '>
-                                <h5>🎬 {top_recs.loc[i, 'title']}</h5>
-                                <p><em>📂 {top_recs.loc[i, 'genres']}</em></p>
-                                <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[i, 'mean_rating']:.2f}</p>
-                            </div>
-                            """, unsafe_allow_html=True)
-
-            # Add vertical spacing between rows
-            # st.markdown("<br><br>", unsafe_allow_html=True)
+                        <div style='
+                            background-color: #F3E8FF;
+                            color: #000000;
+                            padding: 1rem;
+                            border-radius: 12px;
+                            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                            text-align: center;
+                        '>
+                            <h5>🎬 {top_recs.loc[i, 'title']}</h5>
+                            <p><em>📂 {top_recs.loc[i, 'genres']}</em></p>
+                            <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[i, 'mean_rating']:.2f}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+            
+            # --- Safe vertical spacing between rows ---
+            st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
             
             # Second row with exactly 2 recommendations centered
             if len(top_recs) > 3:
                 cols2 = st.columns([1, 3, 3, 1], gap="large")
-                second_row_indices = [3, 4]
                 for idx, col_idx in enumerate([1, 2]):
                     if 3 + idx < len(top_recs):
                         with cols2[col_idx]:
