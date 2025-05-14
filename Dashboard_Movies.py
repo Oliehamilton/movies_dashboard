@@ -262,37 +262,42 @@ with col4:
         ]
 
     # --- Top Movies ---
-    top_movies = filtered.sort_values('mean_rating', ascending=False).head(5)
-    top_movies['title_with_year'] = top_movies['title'] + " (" + top_movies['release_year_from_date'].astype(str) + ")"
+    # Sort top movies and reset index for rank-based mapping
+    top_movies = top_movies.sort_values('mean_rating', ascending=False).head(5).reset_index(drop=True)
+    
+    # Create title with year
+    top_movies['title_with_year'] = (
+        top_movies['title'] + " (" + top_movies['release_year_from_date'].astype(int).astype(str) + ")"
+    )
 
     if top_movies.empty:
         st.warning(f"No movies found with ≥30 ratings in {selected_label}.")
     else:
-        colors = [
-            "#FFD700",  # Gold – attention & reward
-            "#FF69B4",  # Hot Pink – creativity & energy
-            "#87CEFA",  # Light Sky Blue – trust & calm
-            "#98FB98",  # Pale Green – freshness & success
-            "#FFB6C1"   # Light Pink – friendliness & approachability
+        # Define rank-based colours
+        rank_colors = [
+            "#FFD700",  # Gold
+            "#FF69B4",  # Hot Pink
+            "#87CEFA",  # Light Sky Blue
+            "#98FB98",  # Pale Green
+            "#FFB6C1"   # Light Pink
         ]
-        # Assign colour by position, not by title
-        # Assign colour by position, not by title
+        
+        # Apply fixed colours by rank
         color_map = {
-            top_movies.loc[i, 'title_with_year']: colors[i]
+            top_movies.loc[i, 'title_with_year']: rank_colors[i]
             for i in range(len(top_movies))
         }
 
         fig = px.bar(
-            top_movies.sort_values('mean_rating'),
+            top_movies,
             x='mean_rating',
             y='title_with_year',
             orientation='h',
             title=f"Top 5 Movies by Average Rating ({selected_label})",
-            labels={'mean_rating': 'Average Rating'},
+            labels={'mean_rating': 'Average Rating', 'title_with_year': 'Movie'},
             color='title_with_year',
             color_discrete_map=color_map
         )
-
         fig.update_traces(marker_line_color='black', marker_line_width=1)
         fig.update_layout(
             showlegend=False,
