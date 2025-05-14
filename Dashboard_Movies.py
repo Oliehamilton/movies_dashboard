@@ -385,3 +385,47 @@ with col6:
             ⭐ {row['mean_rating']:.2f} — {row['rating_count']} ratings  
             ---
             """)
+
+# --- Recommender Section ---
+st.markdown("---")
+st.markdown("## 🎯 Movie Recommender")
+
+# Load user IDs
+user_ids = sorted(final_df['userId'].unique())
+selected_user = st.selectbox("Select a User", options=user_ids, key="user_recommender")
+
+if selected_user:
+    try:
+        neighbour_id = top_neighbours_df.loc[selected_user, "top1"]
+        user_rated = ratings_df[ratings_df["userId"] == selected_user]
+        neighbour_rated = ratings_df[ratings_df["userId"] == neighbour_id]
+
+        # Movies rated by neighbour but not yet seen by user
+        common = pd.merge(user_rated, neighbour_rated, on="movieId")
+        unseen = neighbour_rated[~neighbour_rated["movieId"].isin(common["movieId"])]
+
+        if unseen.empty:
+            st.info("🛑 No unseen recommendations available for this user.")
+        else:
+            # Compute average ratings across all users
+            mean_ratings = ratings_df.groupby("movieId")["rating"].mean().reset_index()
+            mean_ratings.rename(columns={"rating": "mean_rating"}, inplace=True)
+
+            # Enrich unseen movies with title and genre
+            enriched = unseen.merge(original_df[['movieId', 'title', 'genres']], on="movieId", how="left")
+            enriched = enriched.merge(mean_ratings, on="movieId", how="left")
+            top_recs = enriched.sort_values(by="mean_rating", ascending=False).head(5)
+
+            st.markdown(f"### 👤 Recommendations for User {selected_user}")
+            for i, row in top_recs.iterrows():
+                st.markdown(f"""
+                **🎬 {row['title']}**  
+                📂 *{row['genres']}*  
+                ⭐ *Average Rating:* {row['mean_rating']:.2f}
+                ---
+                """)
+
+    except KeyError:
+        st.error("User or neighbour not found in mapping.")
+    except Exception as e:
+        st.error(f"Unexpected error: {e}")
