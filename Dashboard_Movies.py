@@ -467,20 +467,21 @@ if selected_user:
                         <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[i, 'mean_rating']:.2f}</p>
                     </div>
                     """, unsafe_allow_html=True)
-
-            # Second row with 2 columns, centred
+            
+            # Second row with exactly 2 recommendations centered
             if len(top_recs) > 3:
                 cols2 = st.columns([1, 3, 3, 1], gap="large")
-                offset = 1  # start from second column
-                for j in range(3, min(5, len(top_recs))):
-                    with cols2[offset]:
-                        st.markdown(f"""
-                        <div style='text-align: center;'>
-                            <h5>🎬 {top_recs.loc[j, 'title']}</h5>
-                            <p><em>📂 {top_recs.loc[j, 'genres']}</em></p>
-                            <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[j, 'mean_rating']:.2f}</p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                second_row_indices = [3, 4]
+                for idx, col_idx in enumerate([1, 2]):
+                    if 3 + idx < len(top_recs):
+                        with cols2[col_idx]:
+                            st.markdown(f"""
+                            <div style='text-align: center;'>
+                                <h5>🎬 {top_recs.loc[3 + idx, 'title']}</h5>
+                                <p><em>📂 {top_recs.loc[3 + idx, 'genres']}</em></p>
+                                <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[3 + idx, 'mean_rating']:.2f}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
 
     except KeyError:
         st.error("User or neighbour not found in mapping.")
