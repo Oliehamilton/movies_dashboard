@@ -262,6 +262,7 @@ with col4:
         ]
 
     # --- Top Movies ---
+    top_movies = filtered.sort_values('mean_rating', ascending=False).head(10)
     top_movies['title_with_year'] = top_movies['title'] + " (" + top_movies['release_year_from_date'].astype(str) + ")"
 
     if top_movies.empty:
