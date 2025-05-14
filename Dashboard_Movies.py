@@ -268,13 +268,18 @@ with col4:
     if top_movies.empty:
         st.warning(f"No movies found with ≥30 ratings in {selected_label}.")
     else:
-        pastel_palette = [
-            "#bcb6f6", "#a0c4ff", "#ffd6a5", "#caffbf", "#ffadad",
-            "#fdffb6", "#d0bdf4", "#ffc6ff", "#9bf6ff", "#bdb2ff"
+        colors = [
+            "#FFD700",  # Gold – attention & reward
+            "#FF69B4",  # Hot Pink – creativity & energy
+            "#87CEFA",  # Light Sky Blue – trust & calm
+            "#98FB98",  # Pale Green – freshness & success
+            "#FFB6C1"   # Light Pink – friendliness & approachability
         ]
+        # Assign colour by position, not by title
+        # Assign colour by position, not by title
         color_map = {
-            row['title_with_year']: pastel_palette[i % len(pastel_palette)]
-            for i, row in top_movies.iterrows()
+            top_movies.loc[i, 'title_with_year']: colors[i]
+            for i in range(len(top_movies))
         }
 
         fig = px.bar(
@@ -282,7 +287,7 @@ with col4:
             x='mean_rating',
             y='title_with_year',
             orientation='h',
-            title=f"Top 10 Movies by Average Rating ({selected_label})",
+            title=f"Top 5 Movies by Average Rating ({selected_label})",
             labels={'mean_rating': 'Average Rating'},
             color='title_with_year',
             color_discrete_map=color_map
