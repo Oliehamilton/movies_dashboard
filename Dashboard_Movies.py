@@ -455,14 +455,34 @@ if selected_user:
             top_recs = enriched.sort_values(by="mean_rating", ascending=False).head(5)
 
             st.markdown(f"### 👤 Recommendations for User {selected_user}")
-            for i, row in top_recs.iterrows():
-                st.markdown(f"""
-                **🎬 {row['title']}**  
-                📂 *{row['genres']}*  
-                ⭐ *Average Rating:* {row['mean_rating']:.2f}
-                ---
-                """)
+            # Split recommendations
+top_recs = top_recs.reset_index(drop=True)
 
+# First row with 3 columns
+cols1 = st.columns([1, 1, 1], gap="large")
+for i in range(min(3, len(top_recs))):
+    with cols1[i]:
+        st.markdown(f"""
+        <div style='text-align: center;'>
+            <h5>🎬 {top_recs.loc[i, 'title']}</h5>
+            <p><em>📂 {top_recs.loc[i, 'genres']}</em></p>
+            <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[i, 'mean_rating']:.2f}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# Second row with 2 columns (centered using blank columns)
+cols2 = st.columns([1, 1, 1, 1], gap="large")
+offset = 1  # leave first column empty for centering
+for j in range(3, min(5, len(top_recs))):
+    with cols2[offset]:
+        st.markdown(f"""
+        <div style='text-align: center;'>
+            <h5>🎬 {top_recs.loc[j, 'title']}</h5>
+            <p><em>📂 {top_recs.loc[j, 'genres']}</em></p>
+            <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[j, 'mean_rating']:.2f}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    offset += 1
     except KeyError:
         st.error("User or neighbour not found in mapping.")
     except Exception as e:
