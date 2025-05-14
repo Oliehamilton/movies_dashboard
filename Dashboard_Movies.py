@@ -108,21 +108,33 @@ st.markdown(dark_mode_css, unsafe_allow_html=True)
 # --- Title ---
 st.markdown("<h1 style='text-align: center; margin-bottom: 1rem;'>🎬 Movie Dashboard</h1>", unsafe_allow_html=True)
 
+# --- Interactive Year Selection ---
+years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().astype(int).tolist(), reverse=True)
+
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
 with col1:
-    st.markdown("### 🎯 Summary Metrics")
     selected_year = st.selectbox("Filter by Year", years)
 
-    # --- Calculate Metrics ---
-    if selected_year == 'All':
-        filtered_df = movies_df.copy()
-    else:
-        filtered_df = movies_df[movies_df['release_year_from_date'] == selected_year]
 
-    average_rating = round(filtered_df['mean_rating'].mean(), 2)
-    movie_count = filtered_df['movieId'].nunique()
 
+
+col3, col4 = st.columns([2, 2])
+
+# --- Filter the Data ---
+if selected_year == 'All':
+    filtered_df = movies_df.copy()
+else:
+    filtered_df = movies_df[movies_df['release_year_from_date'] == selected_year]
+
+# --- Calculate Metrics ---
+average_rating = round(filtered_df['mean_rating'].mean(), 2)
+movie_count = filtered_df['movieId'].nunique()
+
+# --- Donut Charts (Average Rating & Movie Count) ---
+
+with col1:
+    st.markdown("### 🎯 Summary Metrics")
     st.subheader("Average Rating")
     fig_rating = go.Figure(data=[go.Pie(
         labels=["Rating", ""],
@@ -154,7 +166,7 @@ with col1:
         annotations=[dict(text=str(movie_count), x=0.5, y=0.5, font_size=24, showarrow=False)]
     )
     st.plotly_chart(fig_count, use_container_width=True)
-    
+
 # --- Yearly Trend Section (Movie Count + Avg Rating over Time) ---
 with col2:
     st.subheader("Movie Production and Quality Over Time")
@@ -296,7 +308,7 @@ with col4:
     # --- Top Movies ---
     # Sort and select top 5
     top_movies = filtered.sort_values('mean_rating', ascending=False).head(5).reset_index(drop=True)
-    
+
     # Create title with year
     top_movies['title_with_year'] = (
         top_movies['title'] + " (" + top_movies['release_year_from_date'].astype(int).astype(str) + ")"
@@ -313,7 +325,7 @@ with col4:
             "#98FB98",  # Pale Green
             "#FFB6C1"   # Light Pink
         ]
-        
+
         # Apply fixed colours by rank
         color_map = {
             top_movies.loc[i, 'title_with_year']: rank_colors[i]
@@ -467,10 +479,10 @@ if selected_user:
                             <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[i, 'mean_rating']:.2f}</p>
                         </div>
                     """, unsafe_allow_html=True)
-            
+
             # --- Safe vertical spacing between rows ---
             # st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
-            
+
             # Second row with exactly 2 recommendations centered
             if len(top_recs) > 3:
                 cols2 = st.columns([1, 3, 3, 1], gap="large")
