@@ -79,7 +79,6 @@ with col1:
     selected_year = st.selectbox("Filter by Year", years)
 
 col3, col4 = st.columns([2, 2])
-col5, col6 = st.columns([3, 2])
 
 # --- Filter the Data ---
 if selected_year == 'All':
@@ -315,6 +314,7 @@ with col4:
 
 
 # --- Discovery Highlights ---
+col5, col6 = st.columns([3, 2])
 with col5:
     st.subheader("Rising Genres")
 
