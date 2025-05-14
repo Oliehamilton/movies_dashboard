@@ -296,7 +296,6 @@ with col4:
             font=dict(color='#EEEEEE'),
             xaxis=dict(range=[0, 5]),
             yaxis=dict(categoryorder='total ascending'),
-            labels={'mean_rating': 'Average Rating'},
             margin=dict(t=60, b=40, l=60, r=60)
         )
 
