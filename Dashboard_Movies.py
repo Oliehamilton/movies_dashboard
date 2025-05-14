@@ -41,13 +41,13 @@ st.markdown(dark_mode_css, unsafe_allow_html=True)
 # --- Title ---
 st.title("🎥 Movie Dashboard")
 
+# --- Interactive Year Selection ---
+years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().astype(int).tolist(), reverse=True)
+selected_year = st.selectbox("Filter by Year", years)
+
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
 col3, col4 = st.columns([2, 2])
-
-# --- Interactive Year Selection ---
-years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().astype(int).tolist())
-selected_year = st.selectbox("Filter by Year", years)
 
 # --- Filter the Data ---
 if selected_year == 'All':
