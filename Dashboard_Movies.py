@@ -408,7 +408,7 @@ with col5:
     st.plotly_chart(fig, use_container_width=True)
 
 with col6:
-    st.subheader("Hidden Gems")
+    st.subheader("Top 3 per Genre")
 
     # Genre selector (from one-hot encoded genre columns)
     selected_genre = st.selectbox("Select Genre", genre_cols.tolist())
