@@ -27,10 +27,10 @@ movies_df = load_data()
 # --- Plot 3 Genre Frequency Preparation ---
 
 # Identify genre columns
-genre_cols = df_movies.columns[9:27]
+genre_cols = movies_df.columns[9:27]
 
 # Summarise genre counts per year in long format
-df_genre_year = df_movies[['release_year_from_date'] + list(genre_cols)].copy()
+df_genre_year = movies_df[['release_year_from_date'] + list(genre_cols)].copy()
 
 genre_year_counts = (
     df_genre_year
