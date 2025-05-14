@@ -98,17 +98,16 @@ with col1:
 with col2:
     st.subheader("Movie Trends Over Time")
 
-    # Year slider
+    # Slider
     all_years = movies_df['release_year_from_date'].dropna().astype(int)
     year_min, year_max = int(all_years.min()), int(all_years.max())
     selected_range = st.slider("Select Year Range", year_min, year_max, (year_min, year_max))
 
-    # Filter and summarise
+    # Filter + summarise
     df_filtered = movies_df[
         (movies_df['release_year_from_date'].astype(int) >= selected_range[0]) &
         (movies_df['release_year_from_date'].astype(int) <= selected_range[1])
     ]
-
     summary = (
         df_filtered.groupby('release_year_from_date')
         .agg(movie_count=('title', 'count'), average_rating=('mean_rating', 'mean'))
@@ -125,7 +124,6 @@ with col2:
         y=summary['movie_count'],
         name='Number of Movies',
         marker_color='#7BAFD4',
-        yaxis='y1',
         hovertemplate='Year: %{x}<br>Movies: %{y}<extra></extra>'
     ))
 
@@ -139,26 +137,27 @@ with col2:
         hovertemplate='Year: %{x}<br>Avg Rating: %{y:.2f}<extra></extra>'
     ))
 
+    # Update layout
     fig.update_layout(
         title='Movie Count and Average Rating per Year',
         xaxis=dict(title='Year'),
         yaxis=dict(
             title='Number of Movies',
-            titlefont=dict(color='#7BAFD4'),
-            tickfont=dict(color='#7BAFD4')
+            titlefont_color='#7BAFD4',
+            tickfont_color='#7BAFD4'
         ),
         yaxis2=dict(
             title='Average Rating',
+            titlefont_color='#9F7AEA',
+            tickfont_color='#9F7AEA',
+            anchor='x',
             overlaying='y',
-            side='right',
-            titlefont=dict(color='#9F7AEA'),
-            tickfont=dict(color='#9F7AEA'),
-            range=[0, 10]
+            side='right'
         ),
         legend=dict(x=0.01, y=0.99),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#EEEEEE'),  # ✅ fixed this line
+        font=dict(color='#EEEEEE'),
         margin=dict(t=60, b=40, l=60, r=60)
     )
 
