@@ -16,6 +16,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# --- Title ---
+st.title("🎥 Movie Dashboard")
+
+# --- Force Dark Mode Styling ---
 dark_mode_css = """
 <style>
 body {
@@ -28,22 +32,6 @@ body {
 </style>
 """
 st.markdown(dark_mode_css, unsafe_allow_html=True)
-
-# --- Title and Theming Toggle Aligned Top-Right ---
-col_left, col_right = st.columns([3, 1])
-
-with col_left:
-    st.title("🎥 Movie Dashboard")
-
-with col_right:
-    st.markdown(
-        "<p style='font-size:16px; margin-bottom:0.5rem;'>🌓 <strong>Select Theme</strong></p>",
-        unsafe_allow_html=True
-    )
-    is_dark_mode = st.toggle("🌙 Dark Mode", value=False)
-
-# Apply theme
-set_theme(is_dark_mode)
 
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
