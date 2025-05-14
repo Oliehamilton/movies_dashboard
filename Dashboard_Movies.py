@@ -237,58 +237,46 @@ with col3:
 with col4:
     st.subheader("⭐ Top Rated Movies")
 
-    # Dynamically calculate 5-year bins
-    min_year = genre_year_counts['year'].min()
-    max_year = genre_year_counts['year'].max()
+    # Get unique sorted years
+    all_years = sorted(movies_df['release_year_from_date'].dropna().astype(int).unique().tolist())
 
-    # Create list of 5-year intervals
-    year_blocks = [(start, start + 4) for start in range(min_year, max_year + 1, 5)]
-    block_labels = [f"{start}–{end}" for start, end in year_blocks]
+    # Add "All Years" as default option
+    year_options = ["All Years"] + all_years
+    selected_year = st.selectbox("Select Year", year_options, index=0)
 
-    # Create mapping for label to tuple
-    label_to_range = dict(zip(block_labels, year_blocks))
+    # Filter movies by year (if selected)
+    if selected_year == "All Years":
+        filtered = movies_df
+    else:
+        filtered = movies_df[movies_df['release_year_from_date'].astype(int) == selected_year]
 
-    # Select 5-year range
-    selected_label = st.select_slider("Select 5-Year Block", options=block_labels, value=block_labels[-1])
-    year_start, year_end = label_to_range[selected_label]
+    # Only keep movies with 30+ ratings
+    filtered = filtered[filtered['rating_count'] >= 30]
 
-    # Filter movies within selected time block
-    filtered_movies = movies_df[
-        (movies_df['release_year_from_date'] >= year_start) &
-        (movies_df['release_year_from_date'] <= year_end)
-    ]
+    # Sort and get top 10
+    top_movies = filtered.sort_values('mean_rating', ascending=False).head(10)
 
-    # Merge ratings and filter for count threshold
-    ratings_summary = ratings_df.groupby('movieId').agg(
-        rating_count=('rating', 'count'),
-        mean_rating=('rating', 'mean')
-    ).reset_index()
+    if top_movies.empty:
+        st.warning("No movies found with at least 30 ratings for this year.")
+    else:
+        # Plot with Plotly
+        fig = px.bar(
+            top_movies.sort_values('mean_rating'),
+            x='mean_rating',
+            y='title',
+            orientation='h',
+            title=f"Top 10 Movies by Average Rating ({selected_year})",
+            labels={'mean_rating': 'Average Rating', 'title': 'Movie'},
+            color_discrete_sequence=['#F4D35E']
+        )
 
-    top_rated_avg = (
-        ratings_summary[ratings_summary['rating_count'] >= 30]
-        .merge(filtered_movies[['movieId', 'title']], on='movieId')
-        .sort_values('mean_rating', ascending=False)
-        .head(10)
-    )
+        fig.update_traces(marker_line_color='black', marker_line_width=1)
+        fig.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#EEEEEE'),
+            xaxis=dict(range=[0, 5]),
+            margin=dict(t=60, b=40, l=60, r=60)
+        )
 
-    # Plot bar chart with Plotly
-    fig = px.bar(
-        top_rated_avg.sort_values('mean_rating'),
-        x='mean_rating',
-        y='title',
-        orientation='h',
-        title=f"Top 10 Movies ({year_start}–{year_end}) by Average Rating",
-        labels={'mean_rating': 'Average Rating', 'title': 'Movie'},
-        color_discrete_sequence=['#F4D35E']
-    )
-
-    fig.update_traces(marker_line_color='black', marker_line_width=1)
-    fig.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#EEEEEE'),
-        xaxis=dict(range=[0, 5]),
-        margin=dict(t=60, b=40, l=60, r=60)
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)
