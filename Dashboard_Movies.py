@@ -135,6 +135,7 @@ movie_count = filtered_df['movieId'].nunique()
 
 with col1:
     st.markdown("### 🎯 Summary Metrics")
+    selected_year = st.selectbox("Filter by Year", years)
     st.subheader("Average Rating")
     fig_rating = go.Figure(data=[go.Pie(
         labels=["Rating", ""],
