@@ -318,49 +318,48 @@ col5, col6 = st.columns([3, 2])
 with col5:
     st.subheader("Rising Genres")
 
-        # Create pivot and calculate YoY growth
-    genre_pivot = (
-        genre_year_counts
-        .pivot(index='year', columns='genre_columns', values='movie_count')
-        .sort_index()
-    )
-
-    yoy_diff = (
-        genre_pivot
-        .diff()
-        .reset_index()
-        .melt(id_vars='year', var_name='genre', value_name='change')
-        .dropna()
-    )
-
-    # Get latest year and top 5 growing genres
+    # Define 5-year window
     latest_year = genre_year_counts['year'].max()
+    lookback_year = latest_year - 4
+
+    # Filter data for last 5 years
+    recent_data = genre_year_counts[
+        (genre_year_counts['year'] >= lookback_year) & 
+        (genre_year_counts['year'] <= latest_year)
+    ].copy()
+
+    # Calculate net growth per genre over 5 years
+    growth_summary = (
+        recent_data
+        .groupby('genre_columns')
+        .agg(start_count=('movie_count', lambda x: x.iloc[0]),
+             end_count=('movie_count', lambda x: x.iloc[-1]))
+        .reset_index()
+    )
+    growth_summary['net_growth'] = growth_summary['end_count'] - growth_summary['start_count']
+
+    # Get top 5 genres by growth
     top_genres = (
-        yoy_diff[(yoy_diff['year'] == latest_year) & (yoy_diff['change'] > 0)]
-        .sort_values('change', ascending=False)
-        .head(5)['genre']
+        growth_summary[growth_summary['net_growth'] > 0]
+        .sort_values('net_growth', ascending=False)
+        .head(5)['genre_columns']
         .tolist()
     )
 
     if not top_genres:
-        st.warning(f"No genres showed positive growth in {latest_year}.")
+        st.warning(f"No genres showed net growth from {lookback_year} to {latest_year}.")
     else:
-        # Filter for those genres
-        filtered_trend = genre_year_counts[genre_year_counts['genre_columns'].isin(top_genres)].copy()
-        filtered_trend['year'] = filtered_trend['year'].astype(str)  # force as categorical
+        # Filter for top genres
+        filtered_trend = recent_data[recent_data['genre_columns'].isin(top_genres)].copy()
+        filtered_trend['year'] = filtered_trend['year'].astype(str)
 
-        # Debugging info (optional)
-        # st.write("Top genres for line plot:", top_genres)
-        # st.dataframe(filtered_trend)
-
-        # Line plot
         fig = px.line(
             filtered_trend,
             x='year',
             y='movie_count',
             color='genre_columns',
             markers=True,
-            title=f"Trend Over Time: Top 5 Growing Genres in {latest_year}",
+            title=f"Top 5 Rising Genres ({lookback_year} → {latest_year})",
             labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre', 'year': 'Year'}
         )
 
