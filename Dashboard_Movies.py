@@ -143,7 +143,7 @@ with col2:
         fig.update_layout(
             title='Average Rating per Year',
             yaxis_title='Average Rating',
-            yaxis=dict(range=[0, 10])
+            #yaxis=dict(range=[0, 10])
         )
 
     # Universal layout tweaks
