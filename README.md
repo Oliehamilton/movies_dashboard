@@ -1,26 +1,30 @@
-# movies_dashboard
-Movies Dashboard
+# 🎬 movies_dashboard
 
-This project is an interactive dashboard built with Streamlit, showcasing data visualisation insights from a movie dataset. The dashboard supports real-time exploration of release trends, rating behaviour, genre performance, and top-rated content, designed specifically for a digitally fluent audience (ages 18–35).
+An interactive Streamlit dashboard for exploring trends, ratings, and genre dynamics in movies. Designed with a digital-native audience in mind (ages 18–35), the dashboard emphasises visual clarity, intuitive interaction, and aesthetic appeal.
 
 ## 🔍 Features
 
-- **Theme Toggle (Dark/Light Mode)**  
-  Enhances accessibility and user preference across different lighting environments.
+- **Dark Mode Theme**  
+  Enhances contrast, reduces visual fatigue, and aligns with modern UX expectations for younger users.
 
-- **Average Rating & Movie Count Visuals**  
-  Two donut charts summarising overall dataset metrics.
+- **Average Rating & Movie Count Metrics**  
+  Donut charts summarise key statistics at a glance, combining functional clarity with psychological colour design.
 
 - **Movie Trends Over Time**  
-  Combined bar and line chart showing release volume and average rating per year.
+  Toggle between yearly release volumes and average ratings via interactive bar and line charts.
 
-- **Interactive Genre Explorer**  
-  Dropdown-based component showing the most rated movie and average rating by genre.
+- **Top-Rated Movies Panel**  
+  Highlights the 5 highest-rated films per year block using rank-based colour coding and horizontal bar charts.
 
-- **Top Rated Movies Panel**  
-  A horizontal bar chart highlighting the top 5 films by average rating.
+- **Genre Popularity Explorer**  
+  Displays the top 10 genres up to a selected year with custom colours based on genre identity.
 
-  ## 🧠 Design Rationale
+- **Top 3 Movies per Genre**  
+  For any selected genre, quickly surface its best-rated titles and their associated popularity.
 
-This dashboard follows Human–Computer Interaction (HCI) principles, leveraging colour psychology, clean layout structure, and responsive design to support user engagement. Visual encoding choices are optimised for clarity and emotional resonance.
+- **Collaborative Filtering Recommender**  
+  Suggests highly rated, unseen movies for selected users using user-based similarity metrics.
 
+## 🧠 Design Rationale
+
+This dashboard follows core Human–Computer Interaction (HCI) and data visualisation principles. Visuals are selected based on interpretability and storytelling potential (e.g., bar charts for categorical comparison, line charts for trend analysis). All colours follow psychological guidelines to maintain emotional resonance, particularly suited for the 18–35 age group. The layout structure progressively reveals insights while supporting an exploratory experience.
