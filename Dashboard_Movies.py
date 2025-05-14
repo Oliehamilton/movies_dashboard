@@ -262,13 +262,13 @@ with col4:
         ]
 
     # --- Top Movies ---
+    # Sort and select top 5
+    top_movies = filtered.sort_values('mean_rating', ascending=False).head(5).reset_index(drop=True)
+    
     # Create title with year
     top_movies['title_with_year'] = (
         top_movies['title'] + " (" + top_movies['release_year_from_date'].astype(int).astype(str) + ")"
     )
-
-    # Sort top movies and reset index for rank-based mapping
-    top_movies = top_movies.sort_values('mean_rating', ascending=False).head(5).reset_index(drop=True)
 
     if top_movies.empty:
         st.warning(f"No movies found with ≥30 ratings in {selected_label}.")
