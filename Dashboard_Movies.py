@@ -8,6 +8,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 # --- Page Config ---
 st.set_page_config(
@@ -39,13 +40,42 @@ col3, col4 = st.columns([2, 2])
 col5, col6 = st.columns([1, 1])
 
 # --- Top Donuts Section (Average Rating and Movie Count) ---
+average_rating = 4.0
+movie_count = 5
+
+# --- Donut Chart for Average Rating ---
 with col1:
     st.subheader("Average Rating")
-    st.empty()  # Placeholder for donut chart
+    fig_rating = go.Figure(data=[go.Pie(
+        values=[average_rating, 5 - average_rating],
+        hole=0.6,
+        marker_colors=["#FFD700", "#333333"],
+        textinfo='none'
+    )])
+    fig_rating.update_layout(
+        showlegend=False,
+        annotations=[dict(text=f"{average_rating:.1f}", x=0.5, y=0.5, font_size=20, showarrow=False)],
+        margin=dict(t=0, b=0, l=0, r=0),
+        height=200
+    )
+    st.plotly_chart(fig_rating, use_container_width=True)
 
+# --- Donut Chart for Movie Count ---
+with col1:
     st.subheader("Movie Count")
-    st.empty()  # Placeholder for donut chart
-
+    fig_count = go.Figure(data=[go.Pie(
+        values=[movie_count, max(10, movie_count + 1) - movie_count],
+        hole=0.6,
+        marker_colors=["#1f77b4", "#333333"],
+        textinfo='none'
+    )])
+    fig_count.update_layout(
+        showlegend=False,
+        annotations=[dict(text=str(movie_count), x=0.5, y=0.5, font_size=20, showarrow=False)],
+        margin=dict(t=0, b=0, l=0, r=0),
+        height=200
+    )
+    st.plotly_chart(fig_count, use_container_width=True)
 # --- Yearly Trend Section (Movie Count + Avg Rating over Time) ---
 with col2:
     st.subheader("Movie Trends Over Time")
