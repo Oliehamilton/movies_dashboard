@@ -98,55 +98,77 @@ with col1:
 with col2:
     st.subheader("Movie Trends Over Time")
 
-    # Create year range for slider
+    # Year range slider
     all_years = movies_df['release_year_from_date'].dropna().astype(int)
     year_min, year_max = int(all_years.min()), int(all_years.max())
-
-    # Year range slider
     selected_range = st.slider("Select Year Range", year_min, year_max, (year_min, year_max))
 
-    # Metric selector
-    metric = st.radio("Metric", ["Movie Count", "Average Rating"], horizontal=True)
-
-    # Filter data
-    filtered_df = movies_df[
+    # Filter and summarise data
+    df_filtered = movies_df[
         (movies_df['release_year_from_date'].astype(int) >= selected_range[0]) &
         (movies_df['release_year_from_date'].astype(int) <= selected_range[1])
     ]
-
-    # Group and prepare data
-    if metric == "Movie Count":
-        grouped = (
-            filtered_df['release_year_from_date']
-            .astype(int)
-            .value_counts()
-            .sort_index()
-            .reset_index()
-            .rename(columns={'index': 'Year', 'release_year_from_date': 'Value'})
-        )
-    else:
-        grouped = (
-            filtered_df.groupby('release_year_from_date')['mean_rating']
-            .mean()
-            .reset_index()
-            .rename(columns={'release_year_from_date': 'Year', 'mean_rating': 'Value'})
-        )
-
-    # Plot
-    fig = px.bar(
-        grouped,
-        x='Year',
-        y='Value',
-        title=f"{metric} per Year",
-        labels={'Year': 'Release Year', 'Value': metric},
-        color_discrete_sequence=['dodgerblue']
+    summary = (
+        df_filtered.groupby('release_year_from_date')
+        .agg(movie_count=('title', 'count'), average_rating=('mean_rating', 'mean'))
+        .reset_index()
+        .sort_values('release_year_from_date')
     )
+
+    # Build animated plot with Plotly
+    fig = px.bar(
+        summary,
+        x='release_year_from_date',
+        y='movie_count',
+        labels={'release_year_from_date': 'Year', 'movie_count': 'Number of Movies'},
+        animation_frame='release_year_from_date',
+        range_y=[0, summary['movie_count'].max() * 1.2],
+        color_discrete_sequence=['#7BAFD4']
+    )
+
+    fig.add_scatter(
+        x=summary['release_year_from_date'],
+        y=summary['average_rating'],
+        mode='lines+markers',
+        name='Average Rating',
+        yaxis='y2',
+        line=dict(color='#9F7AEA', width=2)
+    )
+
+    # Dual axis setup
     fig.update_layout(
+        title='Animated Trends: Movie Count & Average Rating Over Time',
+        xaxis_title='Year',
+        yaxis=dict(title='Number of Movies', color='#7BAFD4'),
+        yaxis2=dict(
+            title='Average Rating',
+            overlaying='y',
+            side='right',
+            color='#9F7AEA',
+            range=[0, 10]
+        ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        font_color='#EEEEEE'
+        font_color='#EEEEEE',
+        updatemenus=[{
+            "buttons": [
+                {"args": [None, {"frame": {"duration": 300, "redraw": True}, "fromcurrent": True}],
+                 "label": "▶️ Play",
+                 "method": "animate"},
+                {"args": [[None], {"frame": {"duration": 0}, "mode": "immediate"}],
+                 "label": "⏸ Pause",
+                 "method": "animate"}
+            ],
+            "type": "buttons",
+            "direction": "left",
+            "pad": {"r": 10, "t": 87},
+            "x": 0.1,
+            "xanchor": "right",
+            "y": 0,
+            "yanchor": "top"
+        }]
     )
-    fig.update_traces(hovertemplate='Year: %{x}<br>' + metric + ': %{y:.2f}')
+
     st.plotly_chart(fig, use_container_width=True)
 
 # --- Interactive Genre Panel ---
