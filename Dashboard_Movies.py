@@ -283,7 +283,7 @@ with col4:
             y='title_with_year',
             orientation='h',
             title=f"Top 10 Movies by Average Rating ({selected_label})",
-            labels={'mean_rating': 'Average Rating'}#, 'title_with_year': 'Movie'},
+            labels={'mean_rating': 'Average Rating'},#, 'title_with_year': 'Movie'},
             color='title_with_year',
             color_discrete_map=color_map
         )
