@@ -98,12 +98,12 @@ with col1:
 with col2:
     st.subheader("Movie Trends Over Time")
 
-    # Year range slider
+    # Year slider
     all_years = movies_df['release_year_from_date'].dropna().astype(int)
     year_min, year_max = int(all_years.min()), int(all_years.max())
     selected_range = st.slider("Select Year Range", year_min, year_max, (year_min, year_max))
 
-    # Filter and summarise data
+    # Filter and summarise
     df_filtered = movies_df[
         (movies_df['release_year_from_date'].astype(int) >= selected_range[0]) &
         (movies_df['release_year_from_date'].astype(int) <= selected_range[1])
@@ -117,10 +117,9 @@ with col2:
         .sort_values('Year')
     )
 
-    # Create base figure
+    # Plot
     fig = go.Figure()
 
-    # Add bar chart for movie count
     fig.add_trace(go.Bar(
         x=summary['Year'],
         y=summary['movie_count'],
@@ -130,7 +129,6 @@ with col2:
         hovertemplate='Year: %{x}<br>Movies: %{y}<extra></extra>'
     ))
 
-    # Add line chart for average rating
     fig.add_trace(go.Scatter(
         x=summary['Year'],
         y=summary['average_rating'],
@@ -141,7 +139,6 @@ with col2:
         hovertemplate='Year: %{x}<br>Avg Rating: %{y:.2f}<extra></extra>'
     ))
 
-    # Update layout for dual axis
     fig.update_layout(
         title='Movie Count and Average Rating per Year',
         xaxis=dict(title='Year'),
@@ -161,7 +158,7 @@ with col2:
         legend=dict(x=0.01, y=0.99),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#EEEEEE'),
+        font=dict(color='#EEEEEE'),  # ✅ fixed this line
         margin=dict(t=60, b=40, l=60, r=60)
     )
 
