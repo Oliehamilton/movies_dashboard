@@ -462,7 +462,7 @@ if selected_user:
                 with cols1[i]:
                     st.markdown(f"""
                             <div style='
-                                background-color: #FFF5F7;
+                                background-color: #F3E8FF;
                                 color: #000000;
                                 padding: 1rem;
                                 border-radius: 12px;
@@ -484,7 +484,7 @@ if selected_user:
                         with cols2[col_idx]:
                             st.markdown(f"""
                                 <div style='
-                                    background-color: #FFF5F7;
+                                    background-color: #F3E8FF;
                                     color: #000000;
                                     padding: 1rem;
                                     border-radius: 12px;
