@@ -318,7 +318,7 @@ col5, col6 = st.columns([3, 2])
 with col5:
     st.subheader("Rising Genres")
 
-    # Prepare YoY change
+        # Create pivot and calculate YoY growth
     genre_pivot = (
         genre_year_counts
         .pivot(index='year', columns='genre_columns', values='movie_count')
@@ -333,31 +333,36 @@ with col5:
         .dropna()
     )
 
+    # Get latest year and top 5 growing genres
     latest_year = genre_year_counts['year'].max()
-
-    rising_genres = (
+    top_genres = (
         yoy_diff[(yoy_diff['year'] == latest_year) & (yoy_diff['change'] > 0)]
         .sort_values('change', ascending=False)
-        .head(5)
-        )
-
-    fig = px.bar(
-        rising_genres.sort_values('change'),
-        x='change',
-        y='genre',
-        orientation='h',
-        title=f"Top 5 Rising Genres (YoY Change {latest_year-1} → {latest_year})",
-        labels={'change': 'Increase in Movie Count', 'genre': 'Genre'},
-        color_discrete_sequence=['#90EE90']
+        .head(5)['genre']
+        .tolist()
     )
 
-    fig.update_traces(marker_line_color='black', marker_line_width=1)
+    # Filter for those genres
+    filtered_trend = genre_year_counts[genre_year_counts['genre_columns'].isin(top_genres)]
+
+    # Line plot
+    fig = px.line(
+        filtered_trend,
+        x='year',
+        y='movie_count',
+        color='genre_columns',
+        markers=True,
+        title=f"Trend Over Time: Top 5 Growing Genres in {latest_year}",
+        labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre'}
+    )
+
+    fig.update_traces(mode='lines+markers', marker=dict(size=6), line=dict(width=2))
     fig.update_layout(
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         font=dict(color='#EEEEEE'),
         margin=dict(t=60, b=40, l=60, r=60),
-        yaxis=dict(categoryorder='total ascending')
+        hovermode="x unified"
     )
 
     st.plotly_chart(fig, use_container_width=True)
