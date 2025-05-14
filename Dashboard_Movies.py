@@ -96,7 +96,7 @@ with col1:
     
 # --- Yearly Trend Section (Movie Count + Avg Rating over Time) ---
 with col2:
-    st.subheader("Movie Trends Over Time")
+    st.subheader("Movie Production and Quality Over Time")
 
     # Radio toggle
     metric = st.radio("Select Metric", ["Movie Count per Year", "Average Rating per Year"], horizontal=True)
@@ -159,7 +159,7 @@ with col2:
 
 # --- Interactive Genre Panel ---
 with col3:
-    st.subheader("🎬 Genre Explorer")
+    st.subheader("🎬 Movie Trends Over Time")
     selected_genre = st.selectbox("Select Genre", options=[])  # To be populated dynamically
     st.markdown("**Most Rated Movie:** [Placeholder]")
     st.markdown("**Average Rating:** [Placeholder]")
