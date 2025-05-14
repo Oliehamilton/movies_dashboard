@@ -283,7 +283,7 @@ with col4:
             y='title_with_year',
             orientation='h',
             title=f"Top 10 Movies by Average Rating ({selected_label})",
-            #labels={'mean_rating': 'Average Rating'},
+            labels={'mean_rating': 'Average Rating'},
             color='title_with_year',
             color_discrete_map=color_map
         )
@@ -296,6 +296,7 @@ with col4:
             font=dict(color='#EEEEEE'),
             xaxis=dict(range=[0, 5]),
             yaxis=dict(categoryorder='total ascending'),
+            labels={'mean_rating': 'Average Rating'},
             margin=dict(t=60, b=40, l=60, r=60)
         )
 
