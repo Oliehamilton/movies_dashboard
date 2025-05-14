@@ -316,63 +316,51 @@ with col4:
 # --- Discovery Highlights ---
 col5, col6 = st.columns([3, 2])
 with col5:
-    st.subheader("Rising Genres")
+    st.subheader("Dominant Genres (2010–2014)")
 
-    # Define 5-year window
+    # Year range
     latest_year = genre_year_counts['year'].max()
     lookback_year = latest_year - 4
 
-    # Filter data for last 5 years
-    recent_data = genre_year_counts[
+    # Filter for last 5 years
+    five_years_df = genre_year_counts[
         (genre_year_counts['year'] >= lookback_year) & 
         (genre_year_counts['year'] <= latest_year)
     ].copy()
 
-    # Calculate net growth per genre over 5 years
-    growth_summary = (
-        recent_data
-        .groupby('genre_columns')
-        .agg(start_count=('movie_count', lambda x: x.iloc[0]),
-             end_count=('movie_count', lambda x: x.iloc[-1]))
-        .reset_index()
-    )
-    growth_summary['net_growth'] = growth_summary['end_count'] - growth_summary['start_count']
-
-    # Get top 5 genres by growth
-    top_genres = (
-        growth_summary[growth_summary['net_growth'] > 0]
-        .sort_values('net_growth', ascending=False)
-        .head(5)['genre_columns']
-        .tolist()
+    # Get top 5 genres by total count across this range
+    top_5_genres = (
+        five_years_df.groupby('genre_columns')['movie_count']
+        .sum()
+        .sort_values(ascending=False)
+        .head(5)
+        .index.tolist()
     )
 
-    if not top_genres:
-        st.warning(f"No genres showed net growth from {lookback_year} to {latest_year}.")
-    else:
-        # Filter for top genres
-        filtered_trend = recent_data[recent_data['genre_columns'].isin(top_genres)].copy()
-        filtered_trend['year'] = filtered_trend['year'].astype(str)
+    # Filter again for just those 5
+    top_genre_trends = five_years_df[five_years_df['genre_columns'].isin(top_5_genres)].copy()
+    top_genre_trends['year'] = top_genre_trends['year'].astype(str)
 
-        fig = px.line(
-            filtered_trend,
-            x='year',
-            y='movie_count',
-            color='genre_columns',
-            markers=True,
-            title=f"Top 5 Rising Genres ({lookback_year} → {latest_year})",
-            labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre', 'year': 'Year'}
-        )
+    fig = px.line(
+        top_genre_trends,
+        x='year',
+        y='movie_count',
+        color='genre_columns',
+        markers=True,
+        title=f"Top 5 Most Released Genres ({lookback_year}–{latest_year})",
+        labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre', 'year': 'Year'}
+    )
 
-        fig.update_traces(mode='lines+markers', marker=dict(size=6), line=dict(width=2))
-        fig.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='#EEEEEE'),
-            margin=dict(t=60, b=40, l=60, r=60),
-            hovermode="x unified"
-        )
+    fig.update_traces(mode='lines+markers', marker=dict(size=6), line=dict(width=2))
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#EEEEEE'),
+        margin=dict(t=60, b=40, l=60, r=60),
+        hovermode="x unified"
+    )
 
-        st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)
 
 with col6:
     st.subheader("Hidden Gems")
