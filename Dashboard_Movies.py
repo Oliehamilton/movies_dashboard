@@ -262,7 +262,7 @@ with col4:
         ]
 
     # --- Top Movies ---
-    top_movies = filtered.sort_values('mean_rating', ascending=False).head(10)
+    top_movies = filtered.sort_values('mean_rating', ascending=False).head(5)
 
     if top_movies.empty:
         st.warning(f"No movies found with ≥30 ratings in {selected_label}.")
@@ -291,6 +291,7 @@ with col4:
             paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#EEEEEE'),
             xaxis=dict(range=[0, 5]),
+            yaxis=dict(categoryorder='total ascending'),
             margin=dict(t=60, b=40, l=60, r=60)
         )
 
