@@ -16,50 +16,18 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-def set_theme(is_dark_mode):
-    if is_dark_mode:
-        css = """
-        <style>
-        .stApp {
-            background-color: #111111;
-            color: #EEEEEE;
-        }
-
-        div[data-testid="stToggle"] * {
-            color: #EEEEEE !important;
-        }
-        </style>
-        """
-    else:
-         css = """
-        <style>
-        .stApp {
-            background-color: #FFFFFF;
-            color: #000000;
-        }
-    
-        /* Force all text inside toggle block to be black */
-        div[data-testid="stToggle"] * {
-            color: #000000 !important;
-        }
-    
-        /* Fix span text in all widgets (including radio/selectbox, etc.) */
-        span, label, div, p {
-            color: #000000 !important;
-        }
-    
-        /* Remove any unwanted filter or opacity */
-        div[data-testid="stToggle"] {
-            filter: none !important;
-            opacity: 1 !important;
-        }
-
-        /* Fix the toggle track visibility only */
-        div[data-testid="stToggle"] div[role="switch"] {
-        background-color: #ccc !important;
-        </style>
-        """
-    st.markdown(css, unsafe_allow_html=True)
+dark_mode_css = """
+<style>
+body {
+    background-color: #111111;
+    color: #EEEEEE;
+}
+.stApp {
+    background-color: #111111;
+}
+</style>
+"""
+st.markdown(dark_mode_css, unsafe_allow_html=True)
 
 # --- Title and Theming Toggle Aligned Top-Right ---
 col_left, col_right = st.columns([3, 1])
