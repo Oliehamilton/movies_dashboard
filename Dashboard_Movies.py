@@ -474,6 +474,9 @@ if selected_user:
                                 <p>⭐ <strong>Average Rating:</strong> {top_recs.loc[i, 'mean_rating']:.2f}</p>
                             </div>
                             """, unsafe_allow_html=True)
+
+            # Add vertical spacing between rows
+            st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
             
             # Second row with exactly 2 recommendations centered
             if len(top_recs) > 3:
