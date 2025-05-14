@@ -161,7 +161,7 @@ with col2:
         legend=dict(x=0.01, y=0.99),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        font_color='#EEEEEE',
+        font=dict(color='#EEEEEE'),
         margin=dict(t=60, b=40, l=60, r=60)
     )
 
