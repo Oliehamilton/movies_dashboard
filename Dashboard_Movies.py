@@ -111,7 +111,7 @@ st.markdown("<h1 style='text-align: center; margin-bottom: 1rem;'>🎬 Movie Das
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
 with col1:
-    
+    selected_year = st.selectbox("Filter by Year", years)
 
 # --- Interactive Year Selection ---
 years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().astype(int).tolist(), reverse=True)
@@ -131,8 +131,7 @@ movie_count = filtered_df['movieId'].nunique()
 # --- Donut Charts (Average Rating & Movie Count) ---
 
 with col1:
-    st.markdown("### 🎯 Summary Metrics")
-    selected_year = st.selectbox("Filter by Year", years)
+    st.markdown("### 🎯 Summary Metrics")    
     st.subheader("Average Rating")
     fig_rating = go.Figure(data=[go.Pie(
         labels=["Rating", ""],
