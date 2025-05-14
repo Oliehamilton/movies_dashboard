@@ -318,7 +318,7 @@ col5, col6 = st.columns([3, 2])
 with col5:
     st.subheader("Rising Genres")
 
-        # Create pivot and calculate YoY growth
+    # Create pivot and calculate YoY growth
     genre_pivot = (
         genre_year_counts
         .pivot(index='year', columns='genre_columns', values='movie_count')
