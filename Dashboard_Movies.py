@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 
 # --- Page Config ---
 st.set_page_config(
-    page_title="Movie Dashboard",
+    page_title="Movie Dashboard-FUCK YOU",
     layout="wide",
     initial_sidebar_state="expanded"
 )
