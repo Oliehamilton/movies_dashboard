@@ -10,19 +10,19 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# --- Cache Data Load ---
-@st.cache_data
-def load_data():
-    return pd.read_csv("movies_cleaned_3.csv")
-
-movies_df = load_data()
-
 # --- Page Config ---
 st.set_page_config(
     page_title="Movie Dashboard",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# --- Cache Data Load ---
+@st.cache_data
+def load_data():
+    return pd.read_csv("movies_cleaned_3.csv")
+
+movies_df = load_data()
 
 # --- Force Dark Mode Styling ---
 dark_mode_css = """
