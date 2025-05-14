@@ -274,7 +274,7 @@ with col4:
     label_to_range = dict(zip(block_labels, year_blocks))
 
     # Add "All Years" at the end
-    # block_labels.append("All Years")
+    block_labels.append("All Years")
 
     # Add "All Years" to the beginning
     block_labels.insert(0, "All Years")
