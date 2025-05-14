@@ -366,4 +366,26 @@ with col5:
 
 with col6:
     st.subheader("Hidden Gems")
-    # Hidden gems logic here
+
+    # Genre selector
+    selected_genre = st.selectbox("Select Genre", genre_cols.tolist())
+
+    # Filter for hidden gems: low exposure, high quality
+    gems_df = movies_df[
+        (movies_df[selected_genre] == 1) &
+        (movies_df['rating_count'] < 50) &
+        (movies_df['mean_rating'] >= 4.0)
+    ].copy()
+
+    # Sort by rating descending
+    top_gems = gems_df.sort_values('mean_rating', ascending=False).head(3)
+
+    if top_gems.empty:
+        st.warning(f"No hidden gems found in {selected_genre} with ≥4.0 rating and <50 ratings.")
+    else:
+        for _, row in top_gems.iterrows():
+            st.markdown(f"""
+            **🎬 {row['title']} ({row['release_year_from_date']})**  
+            ⭐ {row['mean_rating']:.2f} — {row['rating_count']} ratings  
+            ---
+            """)
