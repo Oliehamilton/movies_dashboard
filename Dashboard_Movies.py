@@ -27,14 +27,9 @@ def load_data():
 
 movies_df = load_data()
 
-# --- Plot 3 Genre Frequency Preparation ---
-
-# Identify genre columns
+# --- Genre Preparation ---
 genre_cols = movies_df.columns[9:27]
-
-# Summarise genre counts per year in long format
 df_genre_year = movies_df[['release_year_from_date'] + list(genre_cols)].copy()
-
 genre_year_counts = (
     df_genre_year
     .groupby('release_year_from_date')[genre_cols]
@@ -43,12 +38,10 @@ genre_year_counts = (
     .melt(id_vars='release_year_from_date', var_name='genre_columns', value_name='movie_count')
     .rename(columns={'release_year_from_date': 'year'})
 )
-
-# Ensure numeric types
 genre_year_counts['year'] = genre_year_counts['year'].astype(int)
 genre_year_counts['movie_count'] = genre_year_counts['movie_count'].astype(int)
 
-# Genre colour palette
+# --- Genre Colors ---
 genre_colors = {
     "Drama": "#4E79A7", "Comedy": "#F28E2B", "Action": "#E15759", "Adventure": "#76B7B2",
     "Thriller": "#59A14F", "Horror": "#EDC948", "Romance": "#B07AA1", "Crime": "#FF9DA7",
@@ -56,17 +49,16 @@ genre_colors = {
     "Children": "#D37295", "Mystery": "#FABFD2", "War": "#B6992D", "Film-Noir": "#5C5C5C"
 }
 
-# --- Plot 7 Data Preparation --- 
+# --- Load Additional Datasets ---
 ratings_df = pd.read_csv("rating.csv")
 ratings_df.drop(columns=['timestamp'], inplace=True)
-
 original_df = pd.read_csv("movies.csv", encoding="ISO-8859-1")
 final_df = pd.read_csv("movie_recommender.csv")
 
 user_item_matrix = ratings_df.pivot(index='userId', columns='movieId', values='rating')
 adjusted_user_ratings = user_item_matrix.apply(lambda row: row.fillna(row.mean()), axis=1)
 
-# Define helper
+# --- Neighbour Finder ---
 def find_n_neighbours(sim_df, n):
     user_ids = sim_df.index
     top_n = pd.DataFrame(
@@ -77,7 +69,6 @@ def find_n_neighbours(sim_df, n):
     top_n = top_n.applymap(lambda idx: user_ids[idx])
     return top_n
 
-# Cache similarity computation + neighbour retrieval
 @st.cache_data
 def compute_top_neighbours(adjusted_matrix):
     sim_matrix = cosine_similarity(adjusted_matrix)
@@ -87,11 +78,7 @@ def compute_top_neighbours(adjusted_matrix):
 
 top_neighbours_df = compute_top_neighbours(adjusted_user_ratings)
 
-
-
-# --- --- --- --- --- --- --- --- --- --- --- 
-
-# --- Force Dark Mode Styling ---
+# --- Dark Mode Styling ---
 dark_mode_css = """
 <style>
 body {
@@ -108,19 +95,17 @@ st.markdown(dark_mode_css, unsafe_allow_html=True)
 # --- Title ---
 st.markdown("<h1 style='text-align: center; margin-bottom: 1rem;'>🎬 Movie Dashboard</h1>", unsafe_allow_html=True)
 
-# --- Interactive Year Selection ---
+# --- Year Options ---
 years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().astype(int).tolist(), reverse=True)
 
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
+
+# --- Filter Selector and Summary Header ---
 with col1:
-    st.markdown("### 🎯 Summary Metrics")
     selected_year = st.selectbox("Filter by Year", years)
+    st.markdown("### 🎯 Summary Metrics")
     st.subheader("Average Rating")
-
-
-
-col3, col4 = st.columns([2, 2])
 
 # --- Filter the Data ---
 if selected_year == 'All':
@@ -128,12 +113,11 @@ if selected_year == 'All':
 else:
     filtered_df = movies_df[movies_df['release_year_from_date'] == selected_year]
 
-# --- Calculate Metrics ---
+# --- Metrics ---
 average_rating = round(filtered_df['mean_rating'].mean(), 2)
 movie_count = filtered_df['movieId'].nunique()
 
-# --- Donut Charts (Average Rating & Movie Count) ---
-
+# --- Donut Charts ---
 with col1:
     fig_rating = go.Figure(data=[go.Pie(
         labels=["Rating", ""],
@@ -153,7 +137,7 @@ with col1:
     st.subheader("Movie Count")
     fig_count = go.Figure(data=[go.Pie(
         labels=["Movies", ""],
-        values=[movie_count, movie_count * 0.1],  # Fake offset for donut effect
+        values=[movie_count, movie_count * 0.1],
         hole=0.7,
         marker_colors=['#FC8D62', '#222222'],
         textinfo='none'
