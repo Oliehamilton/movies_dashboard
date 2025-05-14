@@ -24,6 +24,35 @@ def load_data():
 
 movies_df = load_data()
 
+# --- Plot 3 Genre Frequency Preparation ---
+
+# Identify genre columns
+genre_cols = df_movies.columns[9:27]
+
+# Summarise genre counts per year in long format
+df_genre_year = df_movies[['release_year_from_date'] + list(genre_cols)].copy()
+
+genre_year_counts = (
+    df_genre_year
+    .groupby('release_year_from_date')[genre_cols]
+    .sum()
+    .reset_index()
+    .melt(id_vars='release_year_from_date', var_name='genre_columns', value_name='movie_count')
+    .rename(columns={'release_year_from_date': 'year'})
+)
+
+# Ensure numeric types
+genre_year_counts['year'] = genre_year_counts['year'].astype(int)
+genre_year_counts['movie_count'] = genre_year_counts['movie_count'].astype(int)
+
+# Genre colour palette
+genre_colors = {
+    "Drama": "#4E79A7", "Comedy": "#F28E2B", "Action": "#E15759", "Adventure": "#76B7B2",
+    "Thriller": "#59A14F", "Horror": "#EDC948", "Romance": "#B07AA1", "Crime": "#FF9DA7",
+    "Fantasy": "#9C755F", "Animation": "#BAB0AC", "Musical": "#8CD17D", "Sci-Fi": "#499894",
+    "Children": "#D37295", "Mystery": "#FABFD2", "War": "#B6992D", "Film-Noir": "#5C5C5C"
+}
+
 # --- Force Dark Mode Styling ---
 dark_mode_css = """
 <style>
@@ -160,9 +189,49 @@ with col2:
 # --- Interactive Genre Panel ---
 with col3:
     st.subheader("🎬 Movie Trends Over Time")
-    selected_genre = st.selectbox("Select Genre", options=[])  # To be populated dynamically
-    st.markdown("**Most Rated Movie:** [Placeholder]")
-    st.markdown("**Average Rating:** [Placeholder]")
+
+    # Define year range from the data
+    min_year = genre_year_counts['year'].min()
+    max_year = genre_year_counts['year'].max()
+
+    # Year slider
+    selected_year = st.slider("Select Year", min_year, max_year, max_year)
+
+    # Filter and summarise top 10 genres up to selected year
+    filtered = genre_year_counts[genre_year_counts['year'] <= selected_year]
+    summary = (
+        filtered.groupby('genre_columns')['movie_count']
+        .sum()
+        .sort_values(ascending=False)
+        .reset_index()
+        .head(10)
+    )
+
+    # Plot bar chart with custom genre colours
+    fig = px.bar(
+        summary,
+        x='movie_count',
+        y='genre_columns',
+        orientation='h',
+        title=f"Top 10 Genres Up to {selected_year}",
+        color='genre_columns',
+        color_discrete_map=genre_colors,
+        labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre'}
+    )
+
+    fig.update_layout(
+        yaxis=dict(categoryorder='total ascending'),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#EEEEEE'),
+        margin=dict(t=60, b=40, l=60, r=60)
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    # Genre dropdown populated from top genres at selected year
+    st.markdown("#### ℹ️ Genre Info")
+    selected_genre = st.selectbox("Select Genre", options=summary['genre_columns'].tolist())
 
 # --- Top Movies Section ---
 with col4:
