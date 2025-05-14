@@ -98,63 +98,57 @@ with col1:
 with col2:
     st.subheader("Movie Trends Over Time")
 
-    # Slider
-    all_years = movies_df['release_year_from_date'].dropna().astype(int)
-    year_min, year_max = int(all_years.min()), int(all_years.max())
-    selected_range = st.slider("Select Year Range", year_min, year_max, (year_min, year_max))
+    # Radio toggle
+    metric = st.radio("Select Metric", ["Movie Count per Year", "Average Rating per Year"], horizontal=True)
 
-    # Filter + summarise
-    df_filtered = movies_df[
-        (movies_df['release_year_from_date'].astype(int) >= selected_range[0]) &
-        (movies_df['release_year_from_date'].astype(int) <= selected_range[1])
-    ]
+    # Prepare summary
     summary = (
-        df_filtered.groupby('release_year_from_date')
+        movies_df.dropna(subset=['release_year_from_date', 'mean_rating'])
+        .copy()
+    )
+    summary['Year'] = summary['release_year_from_date'].astype(int)
+
+    grouped = (
+        summary.groupby('Year')
         .agg(movie_count=('title', 'count'), average_rating=('mean_rating', 'mean'))
         .reset_index()
-        .rename(columns={'release_year_from_date': 'Year'})
         .sort_values('Year')
     )
 
     # Plot
     fig = go.Figure()
 
-    fig.add_trace(go.Bar(
-        x=summary['Year'],
-        y=summary['movie_count'],
-        name='Number of Movies',
-        marker_color='#7BAFD4',
-        hovertemplate='Year: %{x}<br>Movies: %{y}<extra></extra>'
-    ))
+    if metric == "Movie Count per Year":
+        fig.add_trace(go.Bar(
+            x=grouped['Year'],
+            y=grouped['movie_count'],
+            name='Number of Movies',
+            marker_color='#7BAFD4',
+            hovertemplate='Year: %{x}<br>Movies: %{y}<extra></extra>'
+        ))
+        fig.update_layout(
+            title='Movie Count per Year',
+            yaxis_title='Number of Movies'
+        )
 
-    fig.add_trace(go.Scatter(
-        x=summary['Year'],
-        y=summary['average_rating'],
-        name='Average Rating',
-        mode='lines+markers',
-        line=dict(color='#9F7AEA', width=2),
-        yaxis='y2',
-        hovertemplate='Year: %{x}<br>Avg Rating: %{y:.2f}<extra></extra>'
-    ))
+    else:
+        fig.add_trace(go.Scatter(
+            x=grouped['Year'],
+            y=grouped['average_rating'],
+            name='Average Rating',
+            mode='lines+markers',
+            line=dict(color='#9F7AEA', width=2),
+            hovertemplate='Year: %{x}<br>Avg Rating: %{y:.2f}<extra></extra>'
+        ))
+        fig.update_layout(
+            title='Average Rating per Year',
+            yaxis_title='Average Rating',
+            yaxis=dict(range=[0, 10])
+        )
 
-    # Update layout
+    # Universal layout tweaks
     fig.update_layout(
-        title='Movie Count and Average Rating per Year',
-        xaxis=dict(title='Year'),
-        yaxis=dict(
-            title='Number of Movies',
-            titlefont_color='#7BAFD4',
-            tickfont_color='#7BAFD4'
-        ),
-        yaxis2=dict(
-            title='Average Rating',
-            titlefont_color='#9F7AEA',
-            tickfont_color='#9F7AEA',
-            anchor='x',
-            overlaying='y',
-            side='right'
-        ),
-        legend=dict(x=0.01, y=0.99),
+        xaxis_title='Year',
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         font=dict(color='#EEEEEE'),
