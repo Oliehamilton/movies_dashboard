@@ -108,30 +108,21 @@ st.markdown(dark_mode_css, unsafe_allow_html=True)
 # --- Title ---
 st.markdown("<h1 style='text-align: center; margin-bottom: 1rem;'>🎬 Movie Dashboard</h1>", unsafe_allow_html=True)
 
-# --- Interactive Year Selection ---
-years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().astype(int).tolist(), reverse=True)
-
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
 with col1:
-    selected_year = st.selectbox("Filter by Year", years)
-col3, col4 = st.columns([2, 2])
-
-# --- Filter the Data ---
-if selected_year == 'All':
-    filtered_df = movies_df.copy()
-else:
-    filtered_df = movies_df[movies_df['release_year_from_date'] == selected_year]
-
-# --- Calculate Metrics ---
-average_rating = round(filtered_df['mean_rating'].mean(), 2)
-movie_count = filtered_df['movieId'].nunique()
-
-# --- Donut Charts (Average Rating & Movie Count) ---
-
-with col1:
     st.markdown("### 🎯 Summary Metrics")
     selected_year = st.selectbox("Filter by Year", years)
+
+    # --- Calculate Metrics ---
+    if selected_year == 'All':
+        filtered_df = movies_df.copy()
+    else:
+        filtered_df = movies_df[movies_df['release_year_from_date'] == selected_year]
+
+    average_rating = round(filtered_df['mean_rating'].mean(), 2)
+    movie_count = filtered_df['movieId'].nunique()
+
     st.subheader("Average Rating")
     fig_rating = go.Figure(data=[go.Pie(
         labels=["Rating", ""],
