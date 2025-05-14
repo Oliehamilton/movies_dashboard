@@ -318,7 +318,7 @@ col5, col6 = st.columns([3, 2])
 with col5:
     st.subheader("Dominant Genres (2010–2014)")
 
-    # Year range
+    # Year ranges
     latest_year = genre_year_counts['year'].max()
     lookback_year = latest_year - 4
 
