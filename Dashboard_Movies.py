@@ -10,8 +10,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# --- Set Up Data ---
-movies_df = pd.read_csv('movies_cleaned_3.csv')
+# --- Cache Data Load ---
 @st.cache_data
 def load_data():
     return pd.read_csv("movies_cleaned_3.csv")
@@ -24,9 +23,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# --- Title ---
-st.title("🎥 Movie Dashboard")
 
 # --- Force Dark Mode Styling ---
 dark_mode_css = """
@@ -42,10 +38,12 @@ body {
 """
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
+# --- Title ---
+st.title("🎥 Movie Dashboard")
+
 # --- Layout ---
 col1, col2 = st.columns([1, 2])
 col3, col4 = st.columns([2, 2])
-col5, col6 = st.columns([1, 1])
 
 # --- Interactive Year Selection ---
 years = ['All'] + sorted(movies_df['release_year_from_date'].dropna().unique().astype(int).tolist())
@@ -61,7 +59,7 @@ else:
 average_rating = round(filtered_df['mean_rating'].mean(), 2)
 movie_count = filtered_df['movieId'].nunique()
 
-# --- Top Donuts Section ---
+# --- Donut Charts (Average Rating & Movie Count) ---
 with col1:
     st.subheader("Average Rating")
     fig_rating = go.Figure(data=[go.Pie(
@@ -82,7 +80,7 @@ with col1:
     st.subheader("Movie Count")
     fig_count = go.Figure(data=[go.Pie(
         labels=["Movies", ""],
-        values=[movie_count, movie_count * 0.1],  # Just to create the visual donut
+        values=[movie_count, movie_count * 0.1],  # Fake offset for donut effect
         hole=0.7,
         marker_colors=['#FC8D62', '#222222'],
         textinfo='none'
@@ -94,6 +92,7 @@ with col1:
         annotations=[dict(text=str(movie_count), x=0.5, y=0.5, font_size=24, showarrow=False)]
     )
     st.plotly_chart(fig_count, use_container_width=True)
+    
 # --- Yearly Trend Section (Movie Count + Avg Rating over Time) ---
 with col2:
     st.subheader("Movie Trends Over Time")
