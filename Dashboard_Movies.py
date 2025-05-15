@@ -12,7 +12,6 @@ import plotly.graph_objects as go
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from matplotlib.colors import to_hex
 
 # --- Page Config ---
 st.set_page_config(
@@ -78,27 +77,6 @@ def compute_top_neighbours(adjusted_matrix):
     return find_n_neighbours(sim_df, n=5)
 
 top_neighbours_df = compute_top_neighbours(adjusted_user_ratings)
-
-# --- Colu 5 Tag Grequency --- #
-# Prepare Tag Dataset for the Plot
-tags_df = pd.read_csv("tags.csv")
-tags_df['date'] = pd.to_datetime(tags_df['date'])
-tags_df['tag_year'] = tags_df['date'].dt.year
-tags_df['tag_month'] = tags_df['date'].dt.to_period('M').astype(str)
-
-# Define Top Tags
-top_tags = ["All"] + tags_df['tag_clean'].value_counts().nlargest(30).index.tolist()
-
-# Generate Colour Maps
-palette = sns.color_palette("husl", 30)
-hex_colors = [to_hex(c) for c in palette]
-tag_color_map = dict(zip(top_tags[1:], hex_colors))  # exclude 'All'
-
-unique_years = sorted(tags_df['tag_year'].dropna().unique())
-year_palette = sns.color_palette("husl", len(unique_years))
-year_hex_colors = [to_hex(c) for c in year_palette]
-year_color_map = dict(zip(unique_years, year_hex_colors))
-
 
 # --- Dark Mode Styling ---
 dark_mode_css = """
@@ -294,13 +272,13 @@ with col4:
     year_blocks = [(start, start + 4) for start in range(min_year, max_year + 1, 5)]
     block_labels = [f"{start}–{end}" for start, end in year_blocks]
 
-    # Add "All Years" to the beginning only
+    # ✅ Add "All Years" to the beginning only
     block_labels.insert(0, "All Years")
 
-    # Re-map blocks skipping the first label ("All Years")
+    # ✅ Re-map blocks skipping the first label ("All Years")
     label_to_range = dict(zip(block_labels[1:], year_blocks))
 
-    # Set default to 'All Years'
+    # ✅ Set default to 'All Years'
     selected_label = st.radio("Select 5-Year Block", block_labels, index=0, horizontal=True)
 
     if selected_label == "All Years":
@@ -367,47 +345,53 @@ with col4:
 # --- Discovery Highlights ---
 col5, col6 = st.columns([3, 2])
 with col5:
-    st.markdown("### Tag Frequency")
-    selected_tag = st.selectbox("Select Tag", top_tags, key="tag_selector")
+    st.subheader("Dominant Genres (2010–2014)")
 
-    if selected_tag == "All":
-        tags_per_year = tags_df['tag_year'].value_counts().sort_index().reset_index()
-        tags_per_year.columns = ['tag_year', 'count']
-        tags_per_year['color'] = tags_per_year['tag_year'].map(year_color_map)
+    # Year ranges
+    latest_year = genre_year_counts['year'].max()
+    lookback_year = latest_year - 4
 
-        plot = tags_per_year.hvplot.bar(
-            x='tag_year',
-            y='count',
-            color='color',
-            xlabel='Year',
-            ylabel='Number of Tags',
-            title="All Tags - Frequency per Year",
-            width=800,
-            height=400,
-            line_color='black'
-        )
-    else:
-        filtered = tags_df[tags_df['tag_clean'] == selected_tag].copy()
-        grouped = (
-            filtered.groupby('tag_year')
-            .size()
-            .reset_index(name='count')
-        )
-        grouped['color'] = tag_color_map.get(selected_tag, '#999999')
+    # Filter for last 5 years
+    five_years_df = genre_year_counts[
+        (genre_year_counts['year'] >= lookback_year) & 
+        (genre_year_counts['year'] <= latest_year)
+    ].copy()
 
-        plot = grouped.hvplot.bar(
-            x='tag_year',
-            y='count',
-            color='color',
-            xlabel='Year',
-            ylabel='Frequency',
-            title=f"Frequency of '{selected_tag}' by Year",
-            width=800,
-            height=400,
-            line_color='black'
-        )
+    # Get top 5 genres by total count across this range
+    top_5_genres = (
+        five_years_df.groupby('genre_columns')['movie_count']
+        .sum()
+        .sort_values(ascending=False)
+        .head(5)
+        .index.tolist()
+    )
 
-    st.bokeh_chart(hv.render(plot, backend='bokeh'), use_container_width=True)
+    # Filter again for just those 5
+    top_genre_trends = five_years_df[five_years_df['genre_columns'].isin(top_5_genres)].copy()
+    top_genre_trends['year'] = top_genre_trends['year'].astype(str)
+
+    fig = px.line(
+        top_genre_trends,
+        x='year',
+        y='movie_count',
+        color='genre_columns',
+        markers=True,
+        title=f"Top 5 Most Released Genres ({lookback_year}–{latest_year})",
+        labels={'movie_count': 'Number of Movies', 'genre_columns': 'Genre', 'year': 'Year'}
+    )
+
+    fig.update_traces(mode='lines+markers', marker=dict(size=6), line=dict(width=2))
+    fig.update_layout(
+    plot_bgcolor='rgba(0,0,0,0)',
+    paper_bgcolor='rgba(0,0,0,0)',
+    font=dict(color='#EEEEEE'),
+    margin=dict(t=60, b=40, l=60, r=60),
+    hovermode="x unified",
+    legend_title_text='Genre',
+    legend=dict(itemclick='toggleothers', itemdoubleclick='toggle')
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
 
 with col6:
     st.subheader("Top 3 per Genre")
