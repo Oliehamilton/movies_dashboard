@@ -12,6 +12,7 @@ import plotly.graph_objects as go
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+from matplotlib.colors import to_hex
 
 # --- Page Config ---
 st.set_page_config(
@@ -77,6 +78,27 @@ def compute_top_neighbours(adjusted_matrix):
     return find_n_neighbours(sim_df, n=5)
 
 top_neighbours_df = compute_top_neighbours(adjusted_user_ratings)
+
+# --- Colu 5 Tag Grequency --- #
+# Prepare Tag Dataset for the Plot
+tags_df = pd.read_csv("tags.csv")
+tags_df['date'] = pd.to_datetime(tags_df['date'])
+tags_df['tag_year'] = tags_df['date'].dt.year
+tags_df['tag_month'] = tags_df['date'].dt.to_period('M').astype(str)
+
+# Define Top Tags
+top_tags = ["All"] + tags_df['tag_clean'].value_counts().nlargest(30).index.tolist()
+
+# Generate Colour Maps
+palette = sns.color_palette("husl", 30)
+hex_colors = [to_hex(c) for c in palette]
+tag_color_map = dict(zip(top_tags[1:], hex_colors))  # exclude 'All'
+
+unique_years = sorted(tags_df['tag_year'].dropna().unique())
+year_palette = sns.color_palette("husl", len(unique_years))
+year_hex_colors = [to_hex(c) for c in year_palette]
+year_color_map = dict(zip(unique_years, year_hex_colors))
+
 
 # --- Dark Mode Styling ---
 dark_mode_css = """
